@@ -3,7 +3,7 @@
 # rubocop:disable all
 
 module LinodeAPI
-  API_SPEC =
+  SPEC =
 {:linode=>
   {:type=>:group,
    :subs=>

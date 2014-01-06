@@ -12,14 +12,15 @@ TEMPLATE = '##
 # rubocop:disable all
 
 module LinodeAPI
-  API_SPEC = <%= clean %>
+  API_SPEC =
+<%= clean %>
 end
 '
 
 raw = HTTParty.get('https://api.linode.com/?api_action=api.spec').body
 spec = JSON.parse raw
 clean = ''
-PP.pp(spec, clean)
+PP.pp(spec['DATA']['METHODS'], clean)
 File.open(SPEC_PATH, 'w') { |fh| fh.write ERB.new(TEMPLATE).result }
 
 puts 'Updated spec file'

@@ -411,7 +411,6 @@ module LinodeAPI
               {:desc=>"The Label for this profile",
                :type=>"string",
                :required=>true},
-             "ConfigID"=>{:desc=>"", :type=>"numeric", :required=>true},
              "DiskList"=>
               {:desc=>
                 "A comma delimited list of DiskIDs; position reflects device node.  The 9th element for specifying the initrd.",
@@ -893,7 +892,6 @@ module LinodeAPI
                 "The hostname or FQDN.  When Type=MX the subdomain to delegate to the Target MX server.",
                :type=>"string",
                :required=>false},
-             "ResourceID"=>{:desc=>"", :type=>"numeric", :required=>true},
              "Weight"=>{:desc=>"", :type=>"numeric", :required=>false},
              "TTL_sec"=>
               {:desc=>"TTL.  Leave as 0 to accept our default.",
@@ -981,7 +979,7 @@ module LinodeAPI
         {"PlanID"=>
           {:desc=>"Limits the list to the specified PlanID",
            :type=>"numeric",
-           :required=>"no"}}},
+           :required=>false}}},
      :stackscripts=>
       {:type=>:call,
        :desc=>"Returns a list of available public StackScripts.",

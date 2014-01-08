@@ -7,7 +7,7 @@ linodeapi
 [![Coverage Status](https://coveralls.io/repos/akerl/linodeapi/badge.png?branch=master)](https://coveralls.io/r/akerl/linodeapi?branch=master)
 [![Build Status](https://travis-ci.org/akerl/linodeapi.png?branch=master)](https://travis-ci.org/akerl/linodeapi)
 
-SHORT_DESCRIPTION
+Ruby API wrapper for the [Linode API](https://www.linode.com/api)
 
 ## Usage
 

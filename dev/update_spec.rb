@@ -24,7 +24,7 @@ spec = raw.reduce(Hash.new) do |acc, (method, info)|
   name = groups.pop
 
   params = info['PARAMETERS'].map do |k, v|
-    [ k, { desc: v['DESCRIPTION'], type: v['TYPE'], required: v['REQUIRED'] } ]
+    [ k.to_sym, { desc: v['DESCRIPTION'], type: v['TYPE'].to_sym, required: v['REQUIRED'] } ]
   end
 
   local = groups.reduce(acc) do |layout, new|

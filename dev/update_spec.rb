@@ -42,7 +42,7 @@ spec = raw.reduce(Hash.new) do |acc, (method, info)|
 end
 
 clean = ''
-PP.pp(spec, clean)
+PP.pp({ type: 'group', subs: spec }, clean)
 File.open(SPEC_PATH, 'w') { |fh| fh.write ERB.new(TEMPLATE).result }
 
 puts 'Updated spec file'

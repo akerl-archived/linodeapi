@@ -14,6 +14,7 @@ module LinodeAPI
 
     def initialize(params = {})
       self.class.base_uri params.fetch(:endpoint, DEFAULT_ENDPOINT)
+      @names = params.fetch(:names) { [] }
       @spec = params.fetch(:spec) { SPEC }
       @apikey = params.fetch(:apikey) { self.class.authenticate params }
     end
@@ -27,19 +28,38 @@ module LinodeAPI
     def method_missing(method, *args, &block)
       return super unless respond_to? method
       case @spec[:subs][method][:type]
-      when :group
-        options = { spec: @spec[:subs][method], apikey: @apikey }
-        instance_variable_set "@#{method}", Raw.new(options)
-      when :call
-        self.class.module_eval "alias_method :#{method}, :call"
-        send(method, *args)
+      when :group then make_group method
+      when :call then make_call method, *args
       end
     end
 
+    def make_group(method)
+      options = {
+        spec: @spec[:subs][method],
+        apikey: @apikey,
+        names: @names + [method]
+      }
+      instance_variable_set "@#{method}", Raw.new(options)
+    end
+
+    def make_call(method, *args)
+      self.class.module_eval "alias_method :#{method}, :call"
+      send(method, *args)
+    end
+
     def call(params = {})
-      method = __callee__
-      spec = @spec[:subs][method]
+      method = (@names + [__callee__.to_s]).join '.'
+      spec = @spec[:subs][__callee__]
       options = self.class.validate method, spec[:params], params
+      options.merge! api_key: @apikey, api_action: method
+      self.class.parse self.class.post('', body: options).parsed_response
+    end
+
+    def self.parse(resp)
+      unless resp['ERRORARRAY'].empty?
+        fail "API Error on #{resp['ACTION']}: #{resp['ERRORARRAY']}"
+      end
+      resp
     end
 
     def self.validate(method, spec, given)

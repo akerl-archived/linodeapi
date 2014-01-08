@@ -2,6 +2,11 @@
 # Linode API wrapper
 
 module LinodeAPI
+  ##
+  # Default API endpoint
+
+  DEFAULT_ENDPOINT = 'https://api.linode.com/'
+
   class << self
     ##
     # Insert a helper .new() method for creating a new API object

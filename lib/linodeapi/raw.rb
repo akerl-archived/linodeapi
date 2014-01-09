@@ -16,7 +16,7 @@ module LinodeAPI
       self.class.base_uri params.fetch(:endpoint, DEFAULT_ENDPOINT)
       @names = params.fetch(:names) { [] }
       @spec = params.fetch(:spec) { SPEC }
-      @apikey = params.fetch(:apikey) { authenticate(params) }
+      @apikey = params.fetch(:apikey) { authenticate(params).first }
     end
 
     def respond_to?(method, include_private = false)
@@ -58,7 +58,8 @@ module LinodeAPI
     end
 
     def make_call(method, *args)
-      call(method, *args)
+      instance_eval "def #{method}(*args) call(:#{method}, *args) end"
+      send(method, *args)
     end
 
     def call(method, params = {})
@@ -66,7 +67,6 @@ module LinodeAPI
       method = (@names + [method.to_s]).join '.'
       options = self.class.validate method, spec[:params], params
       options.merge! api_key: @apikey, api_action: method
-      p options
       self.class.parse self.class.post('', body: options).parsed_response
     end
 
@@ -74,8 +74,12 @@ module LinodeAPI
       unless resp['ERRORARRAY'].empty?
         fail "API Error on #{resp['ACTION']}: #{resp['ERRORARRAY']}"
       end
-      p resp['DATA']
-      Hash[resp['DATA'].map { |k, v| [k.downcase.to_sym, v] }]
+      data = resp['DATA']
+      data.is_a?(Hash) ? clean(data) : data.map { |x| clean x }
+    end
+
+    def self.clean(object)
+      Hash[object.map { |k, v| [k.downcase.to_sym, v] }]
     end
 
     def self.validate(method, spec, given)

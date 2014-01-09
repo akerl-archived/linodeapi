@@ -10,20 +10,33 @@ module LinodeAPI
   class Raw
     include HTTParty
 
-    attr_reader :apikey
+    attr_reader :apikey, :spec, :names
 
     def initialize(params = {})
       self.class.base_uri params.fetch(:endpoint, DEFAULT_ENDPOINT)
       @names = params.fetch(:names) { [] }
       @spec = params.fetch(:spec) { SPEC }
-      @apikey = params.fetch(:apikey) { self.class.authenticate params }
+      @apikey = params.fetch(:apikey) { authenticate(params) }
     end
 
     def respond_to?(method, include_private = false)
       super || @spec[:subs].include?(method)
     end
 
+    def to_s
+      'LinodeAPI::Raw object'
+    end
+    alias_method :inspect, :to_s
+
     private
+
+    def authenticate(params = {})
+      return [] unless @names.empty?
+      unless (params.values_at :username, :password).all?
+        fail ArgumentError, 'You must provide either an API key or user/pass'
+      end
+      user.getapikey(params).values_at :api_key
+    end
 
     def method_missing(method, *args, &block)
       return super unless respond_to? method
@@ -37,21 +50,23 @@ module LinodeAPI
       options = {
         spec: @spec[:subs][method],
         apikey: @apikey,
+        username: @username,
         names: @names + [method]
       }
-      instance_variable_set "@#{method}", Raw.new(options)
+      instance_eval "def #{method}() @#{method} end"
+      instance_variable_set "@#{method}".to_sym, Raw.new(options)
     end
 
     def make_call(method, *args)
-      self.class.module_eval "alias_method :#{method}, :call"
-      send(method, *args)
+      call(method, *args)
     end
 
-    def call(params = {})
-      method = (@names + [__callee__.to_s]).join '.'
-      spec = @spec[:subs][__callee__]
+    def call(method, params = {})
+      spec = @spec[:subs][method]
+      method = (@names + [method.to_s]).join '.'
       options = self.class.validate method, spec[:params], params
       options.merge! api_key: @apikey, api_action: method
+      p options
       self.class.parse self.class.post('', body: options).parsed_response
     end
 
@@ -59,7 +74,8 @@ module LinodeAPI
       unless resp['ERRORARRAY'].empty?
         fail "API Error on #{resp['ACTION']}: #{resp['ERRORARRAY']}"
       end
-      resp
+      p resp['DATA']
+      Hash[resp['DATA'].map { |k, v| [k.downcase.to_sym, v] }]
     end
 
     def self.validate(method, spec, given)
@@ -70,14 +86,6 @@ module LinodeAPI
           fail ArgumentError, "#{method} requires #{param}" if info[:required]
         end
       end
-    end
-
-    def self.authenticate(params = {})
-      creds = params.values_at :username, :password
-      unless creds.all?  # Checks if either user or pass is nil
-        fail ArgumentError, 'You must provide either an API key or user/pass'
-      end
-      user.getapikey(username: creds.first, password: creds.last)
     end
   end
 

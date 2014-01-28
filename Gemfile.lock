@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    linodeapi (0.0.2)
+    linodeapi (0.0.3)
       httparty
 
 GEM

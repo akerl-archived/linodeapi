@@ -752,8 +752,9 @@ module LinodeAPI
              :desc=>"Deletes a NodeBalancer's Config",
              :throws=>["NOTFOUND"],
              :params=>
-              {:configid=>
-                {:desc=>"The NodeBalancerID to delete",
+              {:nodebalancerid=>{:desc=>"", :type=>:numeric, :required=>true},
+               :configid=>
+                {:desc=>"The ConfigID to delete",
                  :type=>:numeric,
                  :required=>true}}},
            :list=>

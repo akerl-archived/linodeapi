@@ -98,6 +98,6 @@ module LinodeAPI
   VALIDATION_METHODS = {
     boolean: proc { |e| e == true },
     numeric: proc { |e| Integer(e) },
-    string: proc { |e| e.to_s },
+    string: proc { |e| e.to_s }
   }
 end

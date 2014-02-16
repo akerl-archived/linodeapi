@@ -1,11 +1,12 @@
 linodeapi
 =========
 
-[![Gem Version](https://badge.fury.io/rb/linodeapi.png)](http://badge.fury.io/rb/linodeapi)
-[![Dependency Status](https://gemnasium.com/akerl/linodeapi.png)](https://gemnasium.com/akerl/linodeapi)
-[![Code Climate](https://codeclimate.com/github/akerl/linodeapi.png)](https://codeclimate.com/github/akerl/linodeapi)
-[![Coverage Status](https://coveralls.io/repos/akerl/linodeapi/badge.png?branch=master)](https://coveralls.io/r/akerl/linodeapi?branch=master)
-[![Build Status](https://travis-ci.org/akerl/linodeapi.png?branch=master)](https://travis-ci.org/akerl/linodeapi)
+[![Gem Version](https://img.shields.io/gem/v/linodeapi.svg)](https://rubygems.org/gems/linodeapi)
+[![Dependency Status](https://img.shields.io/gemnasium/akerl/linodeapi.svg)](https://gemnasium.com/akerl/linodeapi)
+[![Code Climate](https://img.shields.io/codeclimate/github/akerl/linodeapi.svg)](https://codeclimate.com/github/akerl/linodeapi)
+[![Coverage Status](https://img.shields.io/coveralls/akerl/linodeapi.svg)](https://coveralls.io/r/akerl/linodeapi)
+[![Build Status](https://img.shields.io/travis/akerl/linodeapi.svg)](https://travis-ci.org/akerl/linodeapi)
+[![MIT Licensed](https://img.shields.io/badge/license-MIT-green.svg)](https://tldrlegal.com/license/mit-license)
 
 Ruby API wrapper for the [Linode API](https://www.linode.com/api)
 

@@ -1,6 +1,5 @@
 ##
 # Linode API wrapper
-
 module LinodeAPI
   ##
   # Default API endpoint

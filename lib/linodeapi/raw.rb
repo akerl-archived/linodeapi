@@ -2,11 +2,9 @@ require 'httparty'
 
 ##
 # Raw API wrapper, dynamically loaded from the published spec
-
 module LinodeAPI
   ##
   # Raw API object
-
   class Raw
     include HTTParty
 

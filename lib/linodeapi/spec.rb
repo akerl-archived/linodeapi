@@ -49,10 +49,18 @@ module LinodeAPI
              :desc=>"",
              :throws=>["NOTFOUND", "VALIDATION"],
              :params=>
-              {:label=>
+              {:isreadonly=>
+                {:desc=>"Enable forced read-only for this Disk",
+                 :type=>:boolean,
+                 :required=>false},
+               :rootpass=>{:desc=>"", :type=>:string, :required=>false},
+               :label=>
                 {:desc=>"The display label for this Disk",
                  :type=>:string,
                  :required=>true},
+               :rootsshkey=>{:desc=>"", :type=>:string, :required=>false},
+               :fromdistributionid=>
+                {:desc=>"", :type=>:numeric, :required=>false},
                :size=>
                 {:desc=>"The size in MB of this Disk.",
                  :type=>:numeric,
@@ -60,7 +68,7 @@ module LinodeAPI
                :linodeid=>{:desc=>"", :type=>:numeric, :required=>true},
                :type=>
                 {:desc=>
-                  "The formatted type of this disk.  Valid types are: ext3, swap, raw",
+                  "The formatted type of this disk.  Valid types are: ext3, ext4, swap, raw",
                  :type=>:string,
                  :required=>true}}},
            :createfromstackscript=>
@@ -72,7 +80,7 @@ module LinodeAPI
                 {:desc=>
                   "JSON encoded name/value pairs, answering this StackScript's User Defined Fields",
                  :type=>:string,
-                 :required=>"yes"},
+                 :required=>true},
                :distributionid=>
                 {:desc=>
                   "Which Distribution to apply this StackScript to.  Must be one from the script's DistributionIDList",
@@ -82,6 +90,11 @@ module LinodeAPI
                 {:desc=>"The root user's password",
                  :type=>:string,
                  :required=>true},
+               :rootsshkey=>
+                {:desc=>
+                  "Optionally sets this string into /root/.ssh/authorized_keys upon distribution configuration.",
+                 :type=>:string,
+                 :required=>false},
                :label=>
                 {:desc=>"The label of this new disk image",
                  :type=>:string,
@@ -94,7 +107,7 @@ module LinodeAPI
                :stackscriptid=>
                 {:desc=>"The StackScript to create this image from",
                  :type=>:numeric,
-                 :required=>"yes"}}},
+                 :required=>true}}},
            :list=>
             {:type=>:call,
              :desc=>"",
@@ -107,15 +120,15 @@ module LinodeAPI
              :desc=>"",
              :throws=>["NOTFOUND", "VALIDATION"],
              :params=>
-              {:rootsshkey=>
+              {:label=>
+                {:desc=>"The label of this new disk image",
+                 :type=>:string,
+                 :required=>true},
+               :rootsshkey=>
                 {:desc=>
                   "Optionally sets this string into /root/.ssh/authorized_keys upon distribution configuration.",
                  :type=>:string,
                  :required=>false},
-               :label=>
-                {:desc=>"The label of this new disk image",
-                 :type=>:string,
-                 :required=>true},
                :size=>
                 {:desc=>"Size of this disk image in MB",
                  :type=>:numeric,
@@ -154,6 +167,70 @@ module LinodeAPI
           "Generates a console token starting a web console LISH session for the requesting IP",
          :throws=>["NOTFOUND", "VALIDATION"],
          :params=>{:linodeid=>{:desc=>"", :type=>:numeric, :required=>true}}},
+       :ip=>
+        {:type=>:group,
+         :subs=>
+          {:addpublic=>
+            {:type=>:call,
+             :desc=>
+              "Assigns a Public IP to a Linode.  Returns the IPAddressID and IPAddress that was added.",
+             :throws=>["NOTFOUND", "VALIDATION"],
+             :params=>
+              {:linodeid=>
+                {:desc=>
+                  "The LinodeID of the Linode that will be assigned an additional public IP address",
+                 :type=>:numeric,
+                 :required=>true}}},
+           :setrdns=>
+            {:type=>:call,
+             :desc=>
+              "Sets the rDNS name of a Public IP.  Returns the IPAddressID and IPAddress that were updated.",
+             :throws=>["NOTFOUND", "VALIDATION"],
+             :params=>
+              {:hostname=>
+                {:desc=>"The hostname to set the reverse DNS to",
+                 :type=>:string,
+                 :required=>true},
+               :ipaddressid=>
+                {:desc=>"The IPAddressID of the address to update",
+                 :type=>:numeric,
+                 :required=>true}}},
+           :list=>
+            {:type=>:call,
+             :desc=>"Lists a Linode's IP addresses.",
+             :throws=>["NOTFOUND"],
+             :params=>
+              {:ipaddressid=>
+                {:desc=>"If specified, limits the result to this IPAddressID",
+                 :type=>:numeric,
+                 :required=>false},
+               :linodeid=>{:desc=>"", :type=>:numeric, :required=>true}}},
+           :swap=>
+            {:type=>:call,
+             :desc=>
+              "Exchanges Public IP addresses between two Linodes within a Datacenter.  The destination of the IP Address can be designated by either the toLinodeID or withIPAddressID parameter.  Returns the resulting relationship of the Linode and IP Address parameters.  When performing a one directional swap, the source is represented by the first of the two resultant array members.",
+             :throws=>["NOTFOUND", "VALIDATION"],
+             :params=>
+              {:tolinodeid=>
+                {:desc=>
+                  "The LinodeID of the Linode where IPAddressID will be transfered",
+                 :type=>:numeric,
+                 :required=>false},
+               :ipaddressid=>
+                {:desc=>"The IPAddressID of an IP Address to transfer or swap",
+                 :type=>:numeric,
+                 :required=>true},
+               :withipaddressid=>
+                {:desc=>"The IP Address ID to swap",
+                 :type=>:numeric,
+                 :required=>false}}},
+           :addprivate=>
+            {:type=>:call,
+             :desc=>
+              "Assigns a Private IP to a Linode.  Returns the IPAddressID that was added.",
+             :throws=>["NOTFOUND"],
+             :params=>
+              {:linodeid=>{:desc=>"", :type=>:numeric, :required=>true}}}}},
        :create=>
         {:type=>:call,
          :desc=>
@@ -169,26 +246,26 @@ module LinodeAPI
             {:desc=>"The desired PlanID available from avail.LinodePlans()",
              :type=>:numeric,
              :required=>true},
-           :paymentterm=>
-            {:desc=>
-              "Subscription term in months for non-metered customers.  One of: 1, 12, or 24",
-             :type=>:numeric,
-             :required=>false},
            :datacenterid=>
             {:desc=>
               "The DatacenterID from avail.datacenters() where you wish to place this new Linode",
              :type=>:numeric,
-             :required=>true}}},
+             :required=>true},
+           :paymentterm=>
+            {:desc=>
+              "Subscription term in months for prepaid customers.  One of: 1, 12, or 24",
+             :type=>:numeric,
+             :required=>false}}},
        :update=>
         {:type=>:call,
          :desc=>"Updates a Linode's properties.",
          :throws=>["NOTFOUND", "VALIDATION"],
          :params=>
-          {:ms_ssh_user=>{:desc=>"", :type=>:string, :required=>false},
-           :alert_cpu_enabled=>
+          {:alert_cpu_enabled=>
             {:desc=>"Enable the cpu usage email alert",
              :type=>:boolean,
              :required=>false},
+           :ms_ssh_user=>{:desc=>"", :type=>:string, :required=>false},
            :alert_bwin_enabled=>
             {:desc=>"Enable the incoming bandwidth email alert",
              :type=>:boolean,
@@ -201,12 +278,12 @@ module LinodeAPI
             {:desc=>"Enable the bw quote email alert",
              :type=>:boolean,
              :required=>false},
-           :backupwindow=>{:desc=>"", :type=>:numeric, :required=>false},
            :alert_diskio_threshold=>
             {:desc=>"IO ops/sec", :type=>:numeric, :required=>false},
-           :backupweeklyday=>{:desc=>"", :type=>:numeric, :required=>false},
            :label=>
             {:desc=>"This Linode's label", :type=>:string, :required=>false},
+           :backupwindow=>{:desc=>"", :type=>:numeric, :required=>false},
+           :backupweeklyday=>{:desc=>"", :type=>:numeric, :required=>false},
            :watchdog=>
             {:desc=>"Enable the Lassie shutdown watchdog",
              :type=>:boolean,
@@ -215,47 +292,27 @@ module LinodeAPI
             {:desc=>"Enable the disk IO email alert",
              :type=>:boolean,
              :required=>false},
-           :ms_ssh_port=>{:desc=>"", :type=>:numeric, :required=>false},
            :lpm_displaygroup=>
             {:desc=>
               "Display group in the Linode list inside the Linode Manager",
              :type=>:string,
              :required=>false},
+           :ms_ssh_port=>{:desc=>"", :type=>:numeric, :required=>false},
            :ms_ssh_disabled=>{:desc=>"", :type=>:boolean, :required=>false},
            :alert_bwquota_threshold=>
             {:desc=>"Percentage of monthly bw quota",
              :type=>:numeric,
              :required=>false},
            :ms_ssh_ip=>{:desc=>"", :type=>:string, :required=>false},
-           :linodeid=>{:desc=>"", :type=>:numeric, :required=>true},
            :alert_bwin_threshold=>
             {:desc=>"Mb/sec", :type=>:numeric, :required=>false},
+           :linodeid=>{:desc=>"", :type=>:numeric, :required=>true},
            :alert_bwout_threshold=>
             {:desc=>"Mb/sec", :type=>:numeric, :required=>false},
            :alert_bwout_enabled=>
             {:desc=>"Enable the outgoing bandwidth email alert",
              :type=>:boolean,
              :required=>false}}},
-       :ip=>
-        {:type=>:group,
-         :subs=>
-          {:list=>
-            {:type=>:call,
-             :desc=>"Lists a Linode's IP addresses.",
-             :throws=>["NOTFOUND"],
-             :params=>
-              {:ipaddressid=>
-                {:desc=>"If specified, limits the result to this IPAddressID",
-                 :type=>:numeric,
-                 :required=>false},
-               :linodeid=>{:desc=>"", :type=>:numeric, :required=>true}}},
-           :addprivate=>
-            {:type=>:call,
-             :desc=>
-              "Assigns a Private IP to a Linode.  Returns the IPAddressID that was added.",
-             :throws=>["NOTFOUND"],
-             :params=>
-              {:linodeid=>{:desc=>"", :type=>:numeric, :required=>true}}}}},
        :clone=>
         {:type=>:call,
          :desc=>
@@ -268,16 +325,16 @@ module LinodeAPI
            "LINODELIMITER",
            "ACCOUNTLIMIT"],
          :params=>
-          {:datacenterid=>
+          {:paymentterm=>
+            {:desc=>
+              "Subscription term in months for prepaid customers.  One of: 1, 12, or 24",
+             :type=>:numeric,
+             :required=>false},
+           :datacenterid=>
             {:desc=>
               "The DatacenterID from avail.datacenters() where you wish to place this new Linode",
              :type=>:numeric,
              :required=>true},
-           :paymentterm=>
-            {:desc=>
-              "Subscription term in months for non-metered customers.  One of: 1, 12, or 24",
-             :type=>:numeric,
-             :required=>false},
            :planid=>
             {:desc=>"The desired PlanID available from avail.LinodePlans()",
              :type=>:numeric,
@@ -343,13 +400,13 @@ module LinodeAPI
                   "Controls if pv_ops kernels should automount devtmpfs at boot. ",
                  :type=>:boolean,
                  :required=>false},
-               :helper_disableupdatedb=>
-                {:desc=>"Enable the disableUpdateDB filesystem helper",
-                 :type=>:boolean,
-                 :required=>false},
                :label=>
                 {:desc=>"The Label for this profile",
                  :type=>:string,
+                 :required=>false},
+               :helper_disableupdatedb=>
+                {:desc=>"Enable the disableUpdateDB filesystem helper",
+                 :type=>:boolean,
                  :required=>false},
                :configid=>{:desc=>"", :type=>:numeric, :required=>true},
                :disklist=>
@@ -409,14 +466,14 @@ module LinodeAPI
                   "Controls if pv_ops kernels should automount devtmpfs at boot. ",
                  :type=>:boolean,
                  :required=>false},
-               :helper_disableupdatedb=>
-                {:desc=>"Enable the disableUpdateDB filesystem helper",
-                 :type=>:boolean,
-                 :required=>false},
                :label=>
                 {:desc=>"The Label for this profile",
                  :type=>:string,
                  :required=>true},
+               :helper_disableupdatedb=>
+                {:desc=>"Enable the disableUpdateDB filesystem helper",
+                 :type=>:boolean,
+                 :required=>false},
                :disklist=>
                 {:desc=>
                   "A comma delimited list of DiskIDs; position reflects device node.  The 9th element for specifying the initrd.",
@@ -556,15 +613,15 @@ module LinodeAPI
                 {:desc=>"This backend Node's label",
                  :type=>:string,
                  :required=>true},
+               :configid=>
+                {:desc=>"The parent ConfigID to attach this Node to",
+                 :type=>:numeric,
+                 :required=>true},
                :mode=>
                 {:desc=>
                   "The connections mode for this node.  One of 'accept', 'reject', or 'drain'",
                  :type=>:string,
                  :required=>false},
-               :configid=>
-                {:desc=>"The parent ConfigID to attach this Node to",
-                 :type=>:numeric,
-                 :required=>true},
                :weight=>
                 {:desc=>
                   "Load balancing weight, 1-255. Higher means more connections.",
@@ -598,13 +655,14 @@ module LinodeAPI
               "To help mitigate abuse, throttle connections per second, per client IP. 0 to disable. Max of 20.",
              :type=>:numeric,
              :required=>false},
+           :paymentterm=>
+            {:desc=>
+              "Subscription term in months for prepaid customers.  One of: 1, 12, or 24",
+             :type=>:numeric,
+             :required=>false},
            :datacenterid=>
             {:desc=>
               "The DatacenterID from avail.datacenters() where you wish to place this new NodeBalancer",
-             :type=>:numeric,
-             :required=>true},
-           :paymentterm=>
-            {:desc=>"Subscription term in months.  One of: 0, 1, 12, or 24",
              :type=>:numeric,
              :required=>true}}},
        :delete=>
@@ -708,12 +766,12 @@ module LinodeAPI
                 {:desc=>"Seconds between health check probes.  2-3600",
                  :type=>:numeric,
                  :required=>false},
+               :configid=>{:desc=>"", :type=>:numeric, :required=>true},
                :algorithm=>
                 {:desc=>
                   "Balancing algorithm.  One of 'roundrobin', 'leastconn', 'source'",
                  :type=>:string,
                  :required=>false},
-               :configid=>{:desc=>"", :type=>:numeric, :required=>true},
                :check_attempts=>
                 {:desc=>
                   "Number of failed probes before taking a node out of rotation. 1-30",
@@ -812,15 +870,15 @@ module LinodeAPI
             {:desc=>"0, 1, or 2 (disabled, active, edit mode)",
              :type=>:numeric,
              :required=>false},
-           :master_ips=>
-            {:desc=>
-              "When type=slave, the zone's master DNS servers list, semicolon separated ",
-             :type=>:string,
-             :required=>false},
            :refresh_sec=>{:desc=>"", :type=>:numeric, :required=>false},
            :lpm_displaygroup=>
             {:desc=>
               "Display group in the Domain list inside the Linode DNS Manager",
+             :type=>:string,
+             :required=>false},
+           :master_ips=>
+            {:desc=>
+              "When type=slave, the zone's master DNS servers list, semicolon separated ",
              :type=>:string,
              :required=>false},
            :soa_email=>
@@ -852,24 +910,24 @@ module LinodeAPI
            :ttl_sec=>{:desc=>"", :type=>:numeric, :required=>false},
            :retry_sec=>{:desc=>"", :type=>:numeric, :required=>false},
            :expire_sec=>{:desc=>"", :type=>:numeric, :required=>false},
+           :domain=>
+            {:desc=>"The zone's name", :type=>:string, :required=>true},
            :status=>
             {:desc=>"0, 1, or 2 (disabled, active, edit mode)",
              :type=>:numeric,
              :required=>false},
-           :domain=>
-            {:desc=>"The zone's name", :type=>:string, :required=>true},
-           :master_ips=>
-            {:desc=>
-              "When type=slave, the zone's master DNS servers list, semicolon separated ",
-             :type=>:string,
-             :required=>false},
+           :type=>{:desc=>"master or slave", :type=>:string, :required=>true},
            :refresh_sec=>{:desc=>"", :type=>:numeric, :required=>false},
            :lpm_displaygroup=>
             {:desc=>
               "Display group in the Domain list inside the Linode DNS Manager",
              :type=>:string,
              :required=>false},
-           :type=>{:desc=>"master or slave", :type=>:string, :required=>true},
+           :master_ips=>
+            {:desc=>
+              "When type=slave, the zone's master DNS servers list, semicolon separated ",
+             :type=>:string,
+             :required=>false},
            :axfr_ips=>
             {:desc=>
               "IP addresses allowed to AXFR the entire zone, semicolon separated",
@@ -905,18 +963,18 @@ module LinodeAPI
                  :type=>:string,
                  :required=>false},
                :weight=>{:desc=>"", :type=>:numeric, :required=>false},
-               :ttl_sec=>
-                {:desc=>"TTL.  Leave as 0 to accept our default.",
-                 :type=>:numeric,
+               :target=>
+                {:desc=>
+                  "When Type=MX the hostname.  When Type=CNAME the target of the alias.  When Type=TXT the value of the record.  \n\t\tWhen Type=A or AAAA the token of '[remote_addr]' will be substituted with the IP address of the request.",
+                 :type=>:string,
                  :required=>false},
                :priority=>
                 {:desc=>"Priority for MX and SRV records, 0-255",
                  :type=>:numeric,
                  :required=>false},
-               :target=>
-                {:desc=>
-                  "When Type=MX the hostname.  When Type=CNAME the target of the alias.  When Type=TXT the value of the record.  \n\t\tWhen Type=A or AAAA the token of '[remote_addr]' will be substituted with the IP address of the request.",
-                 :type=>:string,
+               :ttl_sec=>
+                {:desc=>"TTL.  Leave as 0 to accept our default.",
+                 :type=>:numeric,
                  :required=>false},
                :protocol=>
                 {:desc=>
@@ -941,18 +999,18 @@ module LinodeAPI
                  :type=>:string,
                  :required=>false},
                :weight=>{:desc=>"", :type=>:numeric, :required=>false},
-               :ttl_sec=>
-                {:desc=>"TTL.  Leave as 0 to accept our default.",
-                 :type=>:numeric,
+               :target=>
+                {:desc=>
+                  "When Type=MX the hostname.  When Type=CNAME the target of the alias.  When Type=TXT the value of the record.  \n\t\tWhen Type=A or AAAA the token of '[remote_addr]' will be substituted with the IP address of the request.",
+                 :type=>:string,
                  :required=>false},
                :priority=>
                 {:desc=>"Priority for MX and SRV records, 0-255",
                  :type=>:numeric,
                  :required=>false},
-               :target=>
-                {:desc=>
-                  "When Type=MX the hostname.  When Type=CNAME the target of the alias.  When Type=TXT the value of the record.  \n\t\tWhen Type=A or AAAA the token of '[remote_addr]' will be substituted with the IP address of the request.",
-                 :type=>:string,
+               :ttl_sec=>
+                {:desc=>"TTL.  Leave as 0 to accept our default.",
+                 :type=>:numeric,
                  :required=>false},
                :protocol=>
                 {:desc=>
@@ -1008,6 +1066,11 @@ module LinodeAPI
             {:desc=>"Debian, Ubuntu, Fedora, etc.",
              :type=>:string,
              :required=>false}}},
+       :nodebalancers=>
+        {:type=>:call,
+         :desc=>"Returns NodeBalancer pricing information.",
+         :throws=>[],
+         :params=>{}},
        :distributions=>
         {:type=>:call,
          :desc=>"Returns a list of available Linux Distributions.",
@@ -1100,12 +1163,12 @@ module LinodeAPI
               "Whether this StackScript is published in the Library, for everyone to use",
              :type=>:boolean,
              :required=>false},
+           :description=>{:desc=>"", :type=>:string, :required=>false},
            :distributionidlist=>
             {:desc=>
               "Comma delimited list of DistributionIDs that this script works on ",
              :type=>:string,
-             :required=>true},
-           :description=>{:desc=>"", :type=>:string, :required=>false}}},
+             :required=>true}}},
        :delete=>
         {:type=>:call,
          :desc=>"",
@@ -1120,12 +1183,12 @@ module LinodeAPI
           {:rev_note=>{:desc=>"", :type=>:string, :required=>false},
            :script=>
             {:desc=>"The actual script", :type=>:string, :required=>false},
-           :description=>{:desc=>"", :type=>:string, :required=>false},
            :distributionidlist=>
             {:desc=>
               "Comma delimited list of DistributionIDs that this script works on ",
              :type=>:string,
              :required=>false},
+           :description=>{:desc=>"", :type=>:string, :required=>false},
            :label=>
             {:desc=>"The Label for this StackScript",
              :type=>:string,
@@ -1160,11 +1223,24 @@ module LinodeAPI
       {:getapikey=>
         {:type=>:call,
          :desc=>
-          "Returns a user's API key.  If no API key exists, one is generated.  This method does not require an api_key to be passed in.",
-         :throws=>[],
+          "Authenticates a Linode Manager user against their username, password, and two-factor token (when enabled), and then returns a new API key, which can be used until it expires.  The number of active keys is limited to 20.",
+         :throws=>["AUTHFAIL", " NEEDTOKEN", " PASSWORDEXPIRED", " KEYLIMIT"],
          :params=>
-          {:password=>{:desc=>"", :type=>:string, :required=>true},
-           :username=>{:desc=>"", :type=>:string, :required=>true}}}}},
+          {:label=>
+            {:desc=>"An optional label for this key.",
+             :type=>:string,
+             :required=>false},
+           :expires=>
+            {:desc=>
+              "Number of hours the key will remain valid, between 0 and 8760. 0 means no expiration. Defaults to 168.",
+             :type=>:numeric,
+             :required=>false},
+           :username=>{:desc=>"", :type=>:string, :required=>true},
+           :password=>{:desc=>"", :type=>:string, :required=>true},
+           :token=>
+            {:desc=>"Required when two-factor authentication is enabled.",
+             :type=>:string,
+             :required=>false}}}}},
    :test=>
     {:type=>:group,
      :subs=>

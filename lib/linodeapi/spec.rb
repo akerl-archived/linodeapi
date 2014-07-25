@@ -44,6 +44,56 @@ module LinodeAPI
                  :required=>false},
                :linodeid=>{:desc=>"", :type=>:numeric, :required=>false},
                :diskid=>{:desc=>"", :type=>:numeric, :required=>true}}},
+           :imagize=>
+            {:type=>:call,
+             :desc=>"Creates a gold-master image for future deployments",
+             :throws=>[],
+             :params=>
+              {:label=>
+                {:desc=>
+                  "Sets the name of the image shown in the base image list, defaults to the source image label",
+                 :type=>:string,
+                 :required=>false},
+               :description=>
+                {:desc=>"An optional description of the created image",
+                 :type=>:string,
+                 :required=>false},
+               :linodeid=>
+                {:desc=>"Specifies the source Linode to create the image from",
+                 :type=>:numeric,
+                 :required=>true},
+               :diskid=>
+                {:desc=>"Specifies the source Disk to create the image from",
+                 :type=>:numeric,
+                 :required=>true}}},
+           :createfromimage=>
+            {:type=>:call,
+             :desc=>"Creates a new disk from a previously imagized disk.",
+             :throws=>[],
+             :params=>
+              {:rootsshkey=>
+                {:desc=>
+                  "Optionally sets this string into /root/.ssh/authorized_keys upon image deployment",
+                 :type=>:string,
+                 :required=>false},
+               :size=>
+                {:desc=>
+                  "The size of the disk image to creates. Defaults to the minimum size required for the requested image",
+                 :type=>:numeric,
+                 :required=>false},
+               :linodeid=>
+                {:desc=>"Specifies the Linode to deploy on to",
+                 :type=>:numeric,
+                 :required=>true},
+               :rootpass=>
+                {:desc=>
+                  "Optionally sets the root password at deployment time. If a password is not provided the existing root password of the frozen image will not be modified",
+                 :type=>:string,
+                 :required=>false},
+               :imageid=>
+                {:desc=>"The ID of the frozen image to deploy from",
+                 :type=>:numeric,
+                 :required=>true}}},
            :create=>
             {:type=>:call,
              :desc=>"",
@@ -1217,6 +1267,31 @@ module LinodeAPI
           "Returns a data structure of the entire Linode API specification.  This method does not require authorization.<br><br>For example: <a target=\"_blank\" href=\"https://api.linode.com/?api_action=api.spec\">https://api.linode.com/?api_action=api.spec</a>",
          :throws=>[],
          :params=>{}}}},
+   :image=>
+    {:type=>:group,
+     :subs=>
+      {:delete=>
+        {:type=>:call,
+         :desc=>"Deletes a gold-master image",
+         :throws=>["NOTFOUND"],
+         :params=>
+          {:imageid=>
+            {:desc=>"The ID of the gold-master image to delete",
+             :type=>:numeric,
+             :required=>true}}},
+       :list=>
+        {:type=>:call,
+         :desc=>"Lists available gold-master images",
+         :throws=>["NOTFOUND"],
+         :params=>
+          {:pending=>
+            {:desc=>"Show images currently being created.",
+             :type=>:numeric,
+             :required=>false},
+           :imageid=>
+            {:desc=>"Request information for a specific gold-master image",
+             :type=>:numeric,
+             :required=>false}}}}},
    :user=>
     {:type=>:group,
      :subs=>

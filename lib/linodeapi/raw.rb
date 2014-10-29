@@ -82,11 +82,10 @@ module LinodeAPI
 
     def self.validate(method, spec, given)
       spec.each_with_object({}) do |(param, info), options|
-        if given.include? param
-          options[param] = VALIDATION_METHODS[info[:type]].call given[param]
-        else
+        unless given.include? param
           fail ArgumentError, "#{method} requires #{param}" if info[:required]
         end
+        options[param] = VALIDATION_METHODS[info[:type]].call given[param]
       end
     end
   end

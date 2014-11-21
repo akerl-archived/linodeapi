@@ -71,7 +71,11 @@ module LinodeAPI
              :desc=>"Creates a new disk from a previously imagized disk.",
              :throws=>[],
              :params=>
-              {:rootsshkey=>
+              {:label=>
+                {:desc=>"The label of this new disk image",
+                 :type=>:string,
+                 :required=>false},
+               :rootsshkey=>
                 {:desc=>
                   "Optionally sets this string into /root/.ssh/authorized_keys upon image deployment",
                  :type=>:string,
@@ -1093,7 +1097,7 @@ module LinodeAPI
        :linodeplans=>
         {:type=>:call,
          :desc=>
-          "Returns a structure of Linode PlanIDs containing the Plan label and the availability in each Datacenter. Please note, this method is deprecated and will be removed in the future.",
+          "Returns a structure of Linode PlanIDs containing the Plan label and the availability in each Datacenter.",
          :throws=>[],
          :params=>
           {:planid=>

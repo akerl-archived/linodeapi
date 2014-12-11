@@ -466,6 +466,11 @@ module LinodeAPI
                 {:desc=>"Enable the disableUpdateDB filesystem helper",
                  :type=>:boolean,
                  :required=>false},
+               :helper_network=>
+                {:desc=>
+                  "Automatically creates network configuration files for your distro and places them into your filesystem.",
+                 :type=>:boolean,
+                 :required=>false},
                :configid=>{:desc=>"", :type=>:numeric, :required=>true},
                :disklist=>
                 {:desc=>
@@ -530,6 +535,11 @@ module LinodeAPI
                  :required=>true},
                :helper_disableupdatedb=>
                 {:desc=>"Enable the disableUpdateDB filesystem helper",
+                 :type=>:boolean,
+                 :required=>false},
+               :helper_network=>
+                {:desc=>
+                  "Automatically creates network configuration files for your distro and places them into your filesystem.",
                  :type=>:boolean,
                  :required=>false},
                :disklist=>

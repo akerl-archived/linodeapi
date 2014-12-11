@@ -251,14 +251,18 @@ module LinodeAPI
                  :required=>true}}},
            :list=>
             {:type=>:call,
-             :desc=>"Lists a Linode's IP addresses.",
+             :desc=>
+              "Returns the IP addresses of all Linodes you have access to.",
              :throws=>["NOTFOUND"],
              :params=>
               {:ipaddressid=>
                 {:desc=>"If specified, limits the result to this IPAddressID",
                  :type=>:numeric,
                  :required=>false},
-               :linodeid=>{:desc=>"", :type=>:numeric, :required=>true}}},
+               :linodeid=>
+                {:desc=>"If specified, limits the result to this LinodeID",
+                 :type=>:numeric,
+                 :required=>false}}},
            :swap=>
             {:type=>:call,
              :desc=>

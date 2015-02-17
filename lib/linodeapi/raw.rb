@@ -51,12 +51,13 @@ module LinodeAPI
         username: @username,
         names: @names + [method]
       }
-      instance_eval "def #{method}() @#{method} end"
-      instance_variable_set "@#{method}".to_sym, Raw.new(options)
+      var = "@#{method}".to_sym
+      instance_variable_set var, Raw.new(options)
+      define_singleton_method(method) { instance_variable_get(var) }
     end
 
     def make_call(method, *args)
-      instance_eval "def #{method}(*args) call(:#{method}, *args) end"
+      define_singleton_method(method) { |*a| call(method, *a) }
       send(method, *args)
     end
 

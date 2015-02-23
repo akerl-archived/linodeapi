@@ -45,15 +45,16 @@ module LinodeAPI
     end
 
     def make_group(method)
-      options = {
+      group = Raw.new(
         spec: @spec[:subs][method],
         apikey: @apikey,
         username: @username,
         names: @names + [method]
-      }
-      var = "@#{method}".to_sym
-      instance_variable_set var, Raw.new(options)
-      define_singleton_method(method) { instance_variable_get(var) }
+      )
+      name = "@#{method}".to_sym
+      instance_variable_set name, group
+      define_singleton_method(method) { instance_variable_get(name) }
+      group
     end
 
     def make_call(method, *args)

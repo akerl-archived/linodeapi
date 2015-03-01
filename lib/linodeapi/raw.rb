@@ -1,4 +1,5 @@
 require 'httparty'
+require 'ostruct'
 
 ##
 # Raw API wrapper, dynamically loaded from the published spec
@@ -80,7 +81,7 @@ module LinodeAPI
     end
 
     def self.clean(object)
-      Hash[object.map { |k, v| [k.downcase.to_sym, v] }]
+      OpenStruct.new(Hash[object.map { |k, v| [k.downcase.to_sym, v] }])
     end
 
     def self.validate(method, spec, given)

@@ -71,6 +71,7 @@ module LinodeAPI
     end
 
     def self.parse(resp)
+      resp['ERRORARRAY'].reject! { |x| x['ERRORCODE'].zero? }
       unless resp['ERRORARRAY'].empty?
         fail "API Error on #{resp['ACTION']}: #{resp['ERRORARRAY']}"
       end

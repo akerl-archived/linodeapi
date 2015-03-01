@@ -212,7 +212,7 @@ module LinodeAPI
                  :required=>false},
                :target=>
                 {:desc=>
-                  "When Type=MX the hostname.  When Type=CNAME the target of the alias.  When Type=TXT the value of the record.  \n\t\tWhen Type=A or AAAA the token of '[remote_addr]' will be substituted with the IP address of the request.",
+                  "When Type=MX the hostname.  When Type=CNAME the target of the alias.  When Type=TXT the value of the record. When Type=A or AAAA the token of '[remote_addr]' will be substituted with the IP address of the request.",
                  :type=>:string,
                  :required=>false},
                :type=>
@@ -262,7 +262,7 @@ module LinodeAPI
                  :required=>false},
                :target=>
                 {:desc=>
-                  "When Type=MX the hostname.  When Type=CNAME the target of the alias.  When Type=TXT the value of the record.  \n\t\tWhen Type=A or AAAA the token of '[remote_addr]' will be substituted with the IP address of the request.",
+                  "When Type=MX the hostname.  When Type=CNAME the target of the alias.  When Type=TXT the value of the record. When Type=A or AAAA the token of '[remote_addr]' will be substituted with the IP address of the request.",
                  :type=>:string,
                  :required=>false},
                :weight=>{:desc=>"", :type=>:numeric, :required=>false}}}}},
@@ -409,7 +409,7 @@ module LinodeAPI
                 {:desc=>
                   "A comma delimited list of DiskIDs; position reflects device node.  The 9th element for specifying the initrd.",
                  :type=>:string,
-                 :required=>false},
+                 :required=>true},
                :kernelid=>
                 {:desc=>
                   "The KernelID for this profile.  Found in avail.kernels()",
@@ -756,7 +756,7 @@ module LinodeAPI
                  :required=>true}}},
            :list=>
             {:type=>:call,
-             :desc=>"",
+             :desc=>"Status values are 1: Ready and 2: Being Deleted.",
              :throws=>[],
              :params=>
               {:diskid=>{:desc=>"", :type=>:numeric, :required=>false},
@@ -873,7 +873,7 @@ module LinodeAPI
        :list=>
         {:type=>:call,
          :desc=>
-          "Returns a list of all Linodes user has access or delete to, including some properties",
+          "Returns a list of all Linodes user has access or delete to, including some properties.  Status values are -1: Being Created, 0: Brand New, 1: Running, and 2: Powered Off.",
          :throws=>[],
          :params=>
           {:linodeid=>
@@ -1146,11 +1146,6 @@ module LinodeAPI
            :label=>
             {:desc=>"This NodeBalancer's label",
              :type=>:string,
-             :required=>false},
-           :paymentterm=>
-            {:desc=>
-              "Subscription term in months for prepaid customers.  One of: 1, 12, or 24",
-             :type=>:numeric,
              :required=>false}}},
        :delete=>
         {:type=>:call,

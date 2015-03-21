@@ -14,7 +14,7 @@ module LinodeAPI
     def initialize(params = {})
       self.class.base_uri params.fetch(:endpoint, DEFAULT_ENDPOINT)
       @names = params.fetch(:names) { [] }
-      @spec = params.fetch(:spec) { SPEC }
+      @spec = params.fetch(:spec) { LinodeAPI.spec }
       @apikey = params.fetch(:apikey) { authenticate(params).first }
     end
 

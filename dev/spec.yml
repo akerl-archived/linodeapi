@@ -1,0 +1,1563 @@
+---
+account:
+  estimateinvoice:
+  - desc: 'Estimates the invoice for adding a new Linode or NodeBalancer as well as
+      resizing a Linode. This returns two fields: PRICE which is the estimated cost
+      of the invoice, and INVOICE_TO which is the date invoice would be though with
+      timezone set to America/New_York'
+  - params:
+    - linodeid:
+      - desc: This is the LinodeID you want to resize and is required for mode 'linode_resize'.
+      - required: false
+      - type: :numeric
+    - mode:
+      - desc: 'This is one of the following options: ''linode_new'', ''linode_resize'',
+          or ''nodebalancer_new''.'
+      - required: true
+      - type: :string
+    - paymentterm:
+      - desc: 'Subscription term in months. One of: 1, 12, or 24. This is required
+          for modes ''linode_new'' and ''nodebalancer_new''.'
+      - required: false
+      - type: :numeric
+    - planid:
+      - desc: The desired PlanID available from avail.LinodePlans(). This is required
+          for modes 'linode_new' and 'linode_resize'.
+      - required: false
+      - type: :numeric
+  - throws:
+    - VALIDATION
+  info:
+  - desc: Shows information about your account such as the date your account was opened
+      as well as your network utilization for the current month in gigabytes.
+  - params: []
+  - throws: []
+  paybalance:
+  - desc: Pays current balance on file, returning it in the response.
+  - params: []
+  - throws:
+    - CCEXPIRED
+    - CCFAILED
+    - NOACCESS
+    - PAYMENTLIMITER
+    - VALIDATION
+  updatecard:
+  - desc: ''
+  - params:
+    - ccexpmonth:
+      - desc: ''
+      - required: true
+      - type: :numeric
+    - ccexpyear:
+      - desc: ''
+      - required: true
+      - type: :numeric
+    - ccnumber:
+      - desc: ''
+      - required: true
+      - type: :numeric
+  - throws: []
+api:
+  spec:
+  - desc: 'Returns a data structure of the entire Linode API specification.  This
+      method does not require authorization.<br><br>For example: <a target="_blank"
+      href="https://api.linode.com/?api_action=api.spec">https://api.linode.com/?api_action=api.spec</a>'
+  - params: []
+  - throws: []
+avail:
+  datacenters:
+  - desc: Returns a list of Linode data center facilities.
+  - params: []
+  - throws: []
+  distributions:
+  - desc: Returns a list of available Linux Distributions.
+  - params:
+    - distributionid:
+      - desc: Limits the results to the specified DistributionID
+      - required: false
+      - type: :numeric
+  - throws: []
+  kernels:
+  - desc: List available kernels.
+  - params:
+    - isxen:
+      - desc: Limits the results to show only Xen kernels
+      - required: false
+      - type: :boolean
+    - kernelid:
+      - desc: ''
+      - required: false
+      - type: :numeric
+  - throws: []
+  linodeplans:
+  - desc: Returns a structure of Linode PlanIDs containing the Plan label and the
+      availability in each Datacenter.
+  - params:
+    - planid:
+      - desc: Limits the list to the specified PlanID
+      - required: false
+      - type: :numeric
+  - throws: []
+  nodebalancers:
+  - desc: Returns NodeBalancer pricing information.
+  - params: []
+  - throws: []
+  stackscripts:
+  - desc: Returns a list of available public StackScripts.
+  - params:
+    - distributionid:
+      - desc: Limit the results to StackScripts that can be applied to this DistributionID
+      - required: false
+      - type: :numeric
+    - distributionvendor:
+      - desc: Debian, Ubuntu, Fedora, etc.
+      - required: false
+      - type: :string
+    - keywords:
+      - desc: Search terms
+      - required: false
+      - type: :string
+  - throws: []
+domain:
+  create:
+  - desc: Create a domain record.
+  - params:
+    - axfr_ips:
+      - desc: IP addresses allowed to AXFR the entire zone, semicolon separated
+      - required: false
+      - type: :string
+    - description:
+      - desc: Currently undisplayed.
+      - required: false
+      - type: :string
+    - domain:
+      - desc: The zone's name
+      - required: true
+      - type: :string
+    - expire_sec:
+      - desc: ''
+      - required: false
+      - type: :numeric
+    - lpm_displaygroup:
+      - desc: Display group in the Domain list inside the Linode DNS Manager
+      - required: false
+      - type: :string
+    - master_ips:
+      - desc: 'When type=slave, the zone''s master DNS servers list, semicolon separated '
+      - required: false
+      - type: :string
+    - refresh_sec:
+      - desc: ''
+      - required: false
+      - type: :numeric
+    - retry_sec:
+      - desc: ''
+      - required: false
+      - type: :numeric
+    - soa_email:
+      - desc: Required when type=master
+      - required: false
+      - type: :string
+    - status:
+      - desc: 0, 1, or 2 (disabled, active, edit mode)
+      - required: false
+      - type: :numeric
+    - ttl_sec:
+      - desc: ''
+      - required: false
+      - type: :numeric
+    - type:
+      - desc: master or slave
+      - required: true
+      - type: :string
+  - throws:
+    - NOACCESS
+    - VALIDATION
+  delete:
+  - desc: ''
+  - params:
+    - domainid:
+      - desc: ''
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+  list:
+  - desc: Lists domains you have access to.
+  - params:
+    - domainid:
+      - desc: Limits the list to the specified DomainID
+      - required: false
+      - type: :numeric
+  - throws: []
+  resource:
+    create:
+    - desc: Create a domain record.
+    - params:
+      - domainid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - name:
+        - desc: The hostname or FQDN.  When Type=MX the subdomain to delegate to the
+            Target MX server.
+        - required: false
+        - type: :string
+      - port:
+        - desc: ''
+        - required: false
+        - type: :numeric
+      - priority:
+        - desc: Priority for MX and SRV records, 0-255
+        - required: false
+        - type: :numeric
+      - protocol:
+        - desc: The protocol to append to an SRV record.  Ignored on other record
+            types.
+        - required: false
+        - type: :string
+      - target:
+        - desc: When Type=MX the hostname.  When Type=CNAME the target of the alias.  When
+            Type=TXT the value of the record. When Type=A or AAAA the token of '[remote_addr]'
+            will be substituted with the IP address of the request.
+        - required: false
+        - type: :string
+      - ttl_sec:
+        - desc: TTL.  Leave as 0 to accept our default.
+        - required: false
+        - type: :numeric
+      - type:
+        - desc: 'One of: NS, MX, A, AAAA, CNAME, TXT, or SRV'
+        - required: true
+        - type: :string
+      - weight:
+        - desc: ''
+        - required: false
+        - type: :numeric
+    - throws:
+      - NOACCESS
+      - VALIDATION
+    delete:
+    - desc: ''
+    - params:
+      - domainid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - resourceid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+    list:
+    - desc: ''
+    - params:
+      - domainid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - resourceid:
+        - desc: ''
+        - required: false
+        - type: :numeric
+    - throws: []
+    update:
+    - desc: Update a domain record.
+    - params:
+      - domainid:
+        - desc: ''
+        - required: false
+        - type: :numeric
+      - name:
+        - desc: The hostname or FQDN.  When Type=MX the subdomain to delegate to the
+            Target MX server.
+        - required: false
+        - type: :string
+      - port:
+        - desc: ''
+        - required: false
+        - type: :numeric
+      - priority:
+        - desc: Priority for MX and SRV records, 0-255
+        - required: false
+        - type: :numeric
+      - protocol:
+        - desc: The protocol to append to an SRV record.  Ignored on other record
+            types.
+        - required: false
+        - type: :string
+      - resourceid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - target:
+        - desc: When Type=MX the hostname.  When Type=CNAME the target of the alias.  When
+            Type=TXT the value of the record. When Type=A or AAAA the token of '[remote_addr]'
+            will be substituted with the IP address of the request.
+        - required: false
+        - type: :string
+      - ttl_sec:
+        - desc: TTL.  Leave as 0 to accept our default.
+        - required: false
+        - type: :numeric
+      - weight:
+        - desc: ''
+        - required: false
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+  update:
+  - desc: Update a domain record.
+  - params:
+    - axfr_ips:
+      - desc: IP addresses allowed to AXFR the entire zone, semicolon separated
+      - required: false
+      - type: :string
+    - description:
+      - desc: Currently undisplayed.
+      - required: false
+      - type: :string
+    - domain:
+      - desc: The zone's name
+      - required: false
+      - type: :string
+    - domainid:
+      - desc: ''
+      - required: true
+      - type: :numeric
+    - expire_sec:
+      - desc: ''
+      - required: false
+      - type: :numeric
+    - lpm_displaygroup:
+      - desc: Display group in the Domain list inside the Linode DNS Manager
+      - required: false
+      - type: :string
+    - master_ips:
+      - desc: 'When type=slave, the zone''s master DNS servers list, semicolon separated '
+      - required: false
+      - type: :string
+    - refresh_sec:
+      - desc: ''
+      - required: false
+      - type: :numeric
+    - retry_sec:
+      - desc: ''
+      - required: false
+      - type: :numeric
+    - soa_email:
+      - desc: Required when type=master
+      - required: false
+      - type: :string
+    - status:
+      - desc: 0, 1, or 2 (disabled, active, edit mode)
+      - required: false
+      - type: :numeric
+    - ttl_sec:
+      - desc: ''
+      - required: false
+      - type: :numeric
+    - type:
+      - desc: master or slave
+      - required: false
+      - type: :string
+  - throws:
+    - NOTFOUND
+    - VALIDATION
+image:
+  delete:
+  - desc: Deletes a gold-master image
+  - params:
+    - imageid:
+      - desc: The ID of the gold-master image to delete
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+  list:
+  - desc: Lists available gold-master images
+  - params:
+    - imageid:
+      - desc: Request information for a specific gold-master image
+      - required: false
+      - type: :numeric
+    - pending:
+      - desc: Show images currently being created.
+      - required: false
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+  update:
+  - desc: Update an Image record.
+  - params:
+    - description:
+      - desc: An optional description of the Image.
+      - required: false
+      - type: :string
+    - imageid:
+      - desc: The ID of the Image to modify.
+      - required: true
+      - type: :numeric
+    - label:
+      - desc: The label of the Image.
+      - required: false
+      - type: :string
+  - throws:
+    - NOTFOUND
+    - VALIDATION
+linode:
+  boot:
+  - desc: Issues a boot job for the provided ConfigID.  If no ConfigID is provided
+      boots the last used configuration profile, or the first configuration profile
+      if this Linode has never been booted.
+  - params:
+    - configid:
+      - desc: The ConfigID to boot, available from linode.config.list().
+      - required: false
+      - type: :numeric
+    - linodeid:
+      - desc: ''
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+  clone:
+  - desc: Creates a new Linode, assigns you full privileges, and then clones the specified
+      LinodeID to the new Linode. There is a limit of 5 active clone operations per
+      source Linode.  It is recommended that the source Linode be powered down during
+      the clone.
+  - params:
+    - datacenterid:
+      - desc: The DatacenterID from avail.datacenters() where you wish to place this
+          new Linode
+      - required: true
+      - type: :numeric
+    - linodeid:
+      - desc: The LinodeID that you want cloned
+      - required: true
+      - type: :numeric
+    - paymentterm:
+      - desc: 'Subscription term in months for prepaid customers.  One of: 1, 12,
+          or 24'
+      - required: false
+      - type: :numeric
+    - planid:
+      - desc: The desired PlanID available from avail.LinodePlans()
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOACCESS
+    - NOTFOUND
+    - CCFAILED
+    - VALIDATION
+    - LINODELIMITER
+    - ACCOUNTLIMIT
+  config:
+    create:
+    - desc: Creates a Linode Configuration Profile.
+    - params:
+      - comments:
+        - desc: Comments you wish to save along with this profile
+        - required: false
+        - type: :string
+      - devtmpfs_automount:
+        - desc: 'Controls if pv_ops kernels should automount devtmpfs at boot. '
+        - required: false
+        - type: :boolean
+      - disklist:
+        - desc: A comma delimited list of DiskIDs; position reflects device node.  The
+            9th element for specifying the initrd.
+        - required: true
+        - type: :string
+      - helper_depmod:
+        - desc: 'Creates an empty modprobe file for the kernel you''re booting. '
+        - required: false
+        - type: :boolean
+      - helper_disableupdatedb:
+        - desc: Enable the disableUpdateDB filesystem helper
+        - required: false
+        - type: :boolean
+      - helper_network:
+        - desc: Automatically creates network configuration files for your distro
+            and places them into your filesystem.
+        - required: false
+        - type: :boolean
+      - helper_xen:
+        - desc: Enable the Xen filesystem helper.  Corrects fstab and inittab/upstart
+            entries depending on the kernel you're booting.  You want this.
+        - required: false
+        - type: :boolean
+      - kernelid:
+        - desc: The KernelID for this profile.  Found in avail.kernels()
+        - required: true
+        - type: :numeric
+      - label:
+        - desc: The Label for this profile
+        - required: true
+        - type: :string
+      - linodeid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - ramlimit:
+        - desc: RAMLimit in MB.  0 for max.
+        - required: false
+        - type: :numeric
+      - rootdevicecustom:
+        - desc: A custom root device setting.
+        - required: false
+        - type: :string
+      - rootdevicenum:
+        - desc: Which device number (1-8) that contains the root partition.  0 to
+            utilize RootDeviceCustom.
+        - required: false
+        - type: :numeric
+      - rootdevicero:
+        - desc: 'Enables the ''ro'' kernel flag.  Modern distros want this. '
+        - required: false
+        - type: :boolean
+      - runlevel:
+        - desc: 'One of ''default'', ''single'', ''binbash'' '
+        - required: false
+        - type: :string
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+    delete:
+    - desc: Deletes a Linode Configuration Profile.
+    - params:
+      - configid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - linodeid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+    list:
+    - desc: Lists a Linode's Configuration Profiles.
+    - params:
+      - configid:
+        - desc: ''
+        - required: false
+        - type: :numeric
+      - linodeid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+    update:
+    - desc: Updates a Linode Configuration Profile.
+    - params:
+      - comments:
+        - desc: Comments you wish to save along with this profile
+        - required: false
+        - type: :string
+      - configid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - devtmpfs_automount:
+        - desc: 'Controls if pv_ops kernels should automount devtmpfs at boot. '
+        - required: false
+        - type: :boolean
+      - disklist:
+        - desc: A comma delimited list of DiskIDs; position reflects device node.  The
+            9th element for specifying the initrd.
+        - required: false
+        - type: :string
+      - helper_depmod:
+        - desc: 'Creates an empty modprobe file for the kernel you''re booting. '
+        - required: false
+        - type: :boolean
+      - helper_disableupdatedb:
+        - desc: Enable the disableUpdateDB filesystem helper
+        - required: false
+        - type: :boolean
+      - helper_network:
+        - desc: Automatically creates network configuration files for your distro
+            and places them into your filesystem.
+        - required: false
+        - type: :boolean
+      - helper_xen:
+        - desc: Enable the Xen filesystem helper.  Corrects fstab and inittab/upstart
+            entries depending on the kernel you're booting.  You want this.
+        - required: false
+        - type: :boolean
+      - kernelid:
+        - desc: The KernelID for this profile.  Found in avail.kernels()
+        - required: false
+        - type: :numeric
+      - label:
+        - desc: The Label for this profile
+        - required: false
+        - type: :string
+      - linodeid:
+        - desc: ''
+        - required: false
+        - type: :numeric
+      - ramlimit:
+        - desc: RAMLimit in MB.  0 for max.
+        - required: false
+        - type: :numeric
+      - rootdevicecustom:
+        - desc: A custom root device setting.
+        - required: false
+        - type: :string
+      - rootdevicenum:
+        - desc: Which device number (1-8) that contains the root partition.  0 to
+            utilize RootDeviceCustom.
+        - required: false
+        - type: :numeric
+      - rootdevicero:
+        - desc: 'Enables the ''ro'' kernel flag.  Modern distros want this. '
+        - required: false
+        - type: :boolean
+      - runlevel:
+        - desc: 'One of ''default'', ''single'', ''binbash'' '
+        - required: false
+        - type: :string
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+  create:
+  - desc: Creates a Linode and assigns you full privileges. There is a 75-linodes-per-hour
+      limiter.
+  - params:
+    - datacenterid:
+      - desc: The DatacenterID from avail.datacenters() where you wish to place this
+          new Linode
+      - required: true
+      - type: :numeric
+    - paymentterm:
+      - desc: 'Subscription term in months for prepaid customers.  One of: 1, 12,
+          or 24'
+      - required: false
+      - type: :numeric
+    - planid:
+      - desc: The desired PlanID available from avail.LinodePlans()
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOACCESS
+    - CCFAILED
+    - VALIDATION
+    - LINODELIMITER
+    - ACCOUNTLIMIT
+  delete:
+  - desc: Immediately removes a Linode from your account and issues a pro-rated credit
+      back to your account, if applicable.  To prevent accidental deletes, this requires
+      the Linode has no Disk images.  You must first delete its disk images."
+  - params:
+    - linodeid:
+      - desc: The LinodeID to delete
+      - required: true
+      - type: :numeric
+    - skipchecks:
+      - desc: Skips the safety checks and will always delete the Linode
+      - required: false
+      - type: :boolean
+  - throws:
+    - NOTFOUND
+    - LINODENOTEMPTY
+  disk:
+    create:
+    - desc: ''
+    - params:
+      - fromdistributionid:
+        - desc: ''
+        - required: false
+        - type: :numeric
+      - isreadonly:
+        - desc: Enable forced read-only for this Disk
+        - required: false
+        - type: :boolean
+      - label:
+        - desc: The display label for this Disk
+        - required: true
+        - type: :string
+      - linodeid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - rootpass:
+        - desc: ''
+        - required: false
+        - type: :string
+      - rootsshkey:
+        - desc: ''
+        - required: false
+        - type: :string
+      - size:
+        - desc: The size in MB of this Disk.
+        - required: true
+        - type: :numeric
+      - type:
+        - desc: 'The formatted type of this disk.  Valid types are: ext3, ext4, swap,
+            raw'
+        - required: true
+        - type: :string
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+    createfromdistribution:
+    - desc: ''
+    - params:
+      - distributionid:
+        - desc: The DistributionID to create this disk from.  Found in avail.distributions()
+        - required: true
+        - type: :numeric
+      - label:
+        - desc: The label of this new disk image
+        - required: true
+        - type: :string
+      - linodeid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - rootpass:
+        - desc: The root user's password
+        - required: true
+        - type: :string
+      - rootsshkey:
+        - desc: Optionally sets this string into /root/.ssh/authorized_keys upon distribution
+            configuration.
+        - required: false
+        - type: :string
+      - size:
+        - desc: Size of this disk image in MB
+        - required: true
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+    createfromimage:
+    - desc: Creates a new disk from a previously imagized disk.
+    - params:
+      - imageid:
+        - desc: The ID of the frozen image to deploy from
+        - required: true
+        - type: :numeric
+      - label:
+        - desc: The label of this new disk image
+        - required: false
+        - type: :string
+      - linodeid:
+        - desc: Specifies the Linode to deploy on to
+        - required: true
+        - type: :numeric
+      - rootpass:
+        - desc: Optionally sets the root password at deployment time. If a password
+            is not provided the existing root password of the frozen image will not
+            be modified
+        - required: false
+        - type: :string
+      - rootsshkey:
+        - desc: Optionally sets this string into /root/.ssh/authorized_keys upon image
+            deployment
+        - required: false
+        - type: :string
+      - size:
+        - desc: The size of the disk image to creates. Defaults to the minimum size
+            required for the requested image
+        - required: false
+        - type: :numeric
+    - throws: []
+    createfromstackscript:
+    - desc: ''
+    - params:
+      - distributionid:
+        - desc: Which Distribution to apply this StackScript to.  Must be one from
+            the script's DistributionIDList
+        - required: true
+        - type: :numeric
+      - label:
+        - desc: The label of this new disk image
+        - required: true
+        - type: :string
+      - linodeid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - rootpass:
+        - desc: The root user's password
+        - required: true
+        - type: :string
+      - rootsshkey:
+        - desc: Optionally sets this string into /root/.ssh/authorized_keys upon distribution
+            configuration.
+        - required: false
+        - type: :string
+      - size:
+        - desc: Size of this disk image in MB
+        - required: true
+        - type: :numeric
+      - stackscriptid:
+        - desc: The StackScript to create this image from
+        - required: true
+        - type: :numeric
+      - stackscriptudfresponses:
+        - desc: JSON encoded name/value pairs, answering this StackScript's User Defined
+            Fields
+        - required: true
+        - type: :string
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+    delete:
+    - desc: ''
+    - params:
+      - diskid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - linodeid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+    duplicate:
+    - desc: Performs a bit-for-bit copy of a disk image.
+    - params:
+      - diskid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - linodeid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+    imagize:
+    - desc: Creates a gold-master image for future deployments
+    - params:
+      - description:
+        - desc: An optional description of the created image
+        - required: false
+        - type: :string
+      - diskid:
+        - desc: Specifies the source Disk to create the image from
+        - required: true
+        - type: :numeric
+      - label:
+        - desc: Sets the name of the image shown in the base image list, defaults
+            to the source image label
+        - required: false
+        - type: :string
+      - linodeid:
+        - desc: Specifies the source Linode to create the image from
+        - required: true
+        - type: :numeric
+    - throws: []
+    list:
+    - desc: 'Status values are 1: Ready and 2: Being Deleted.'
+    - params:
+      - diskid:
+        - desc: ''
+        - required: false
+        - type: :numeric
+      - linodeid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+    - throws: []
+    resize:
+    - desc: ''
+    - params:
+      - diskid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - linodeid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - size:
+        - desc: The requested new size of this Disk in MB
+        - required: true
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+    update:
+    - desc: ''
+    - params:
+      - diskid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - isreadonly:
+        - desc: Enable forced read-only for this Disk
+        - required: false
+        - type: :boolean
+      - label:
+        - desc: The display label for this Disk
+        - required: false
+        - type: :string
+      - linodeid:
+        - desc: ''
+        - required: false
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+  ip:
+    addprivate:
+    - desc: Assigns a Private IP to a Linode.  Returns the IPAddressID that was added.
+    - params:
+      - linodeid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+    addpublic:
+    - desc: Assigns a Public IP to a Linode.  Returns the IPAddressID and IPAddress
+        that was added.
+    - params:
+      - linodeid:
+        - desc: The LinodeID of the Linode that will be assigned an additional public
+            IP address
+        - required: true
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+    list:
+    - desc: Returns the IP addresses of all Linodes you have access to.
+    - params:
+      - ipaddressid:
+        - desc: If specified, limits the result to this IPAddressID
+        - required: false
+        - type: :numeric
+      - linodeid:
+        - desc: If specified, limits the result to this LinodeID
+        - required: false
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+    setrdns:
+    - desc: Sets the rDNS name of a Public IP.  Returns the IPAddressID and IPAddress
+        that were updated.
+    - params:
+      - hostname:
+        - desc: The hostname to set the reverse DNS to
+        - required: true
+        - type: :string
+      - ipaddressid:
+        - desc: The IPAddressID of the address to update
+        - required: true
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+    swap:
+    - desc: Exchanges Public IP addresses between two Linodes within a Datacenter.  The
+        destination of the IP Address can be designated by either the toLinodeID or
+        withIPAddressID parameter.  Returns the resulting relationship of the Linode
+        and IP Address parameters.  When performing a one directional swap, the source
+        is represented by the first of the two resultant array members.
+    - params:
+      - ipaddressid:
+        - desc: The IPAddressID of an IP Address to transfer or swap
+        - required: true
+        - type: :numeric
+      - tolinodeid:
+        - desc: The LinodeID of the Linode where IPAddressID will be transfered
+        - required: false
+        - type: :numeric
+      - withipaddressid:
+        - desc: The IP Address ID to swap
+        - required: false
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+  job:
+    list:
+    - desc: ''
+    - params:
+      - jobid:
+        - desc: Limits the list to the specified JobID
+        - required: false
+        - type: :numeric
+      - linodeid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - pendingonly:
+        - desc: ''
+        - required: false
+        - type: :boolean
+    - throws: []
+  list:
+  - desc: 'Returns a list of all Linodes user has access or delete to, including some
+      properties.  Status values are -1: Being Created, 0: Brand New, 1: Running,
+      and 2: Powered Off.'
+  - params:
+    - linodeid:
+      - desc: Limits the list to the specified LinodeID
+      - required: false
+      - type: :numeric
+  - throws: []
+  mutate:
+  - desc: Upgrades a Linode to its next generation.
+  - params:
+    - linodeid:
+      - desc: ''
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+    - VALIDATION
+  reboot:
+  - desc: Issues a shutdown, and then boot job for a given LinodeID.
+  - params:
+    - configid:
+      - desc: ''
+      - required: false
+      - type: :numeric
+    - linodeid:
+      - desc: ''
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+  resize:
+  - desc: Resizes a Linode from one plan to another.  Immediately shuts the Linode
+      down, charges/credits the account, and issue a migration to another host server.
+  - params:
+    - linodeid:
+      - desc: ''
+      - required: true
+      - type: :numeric
+    - planid:
+      - desc: The desired PlanID available from avail.LinodePlans()
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+    - CCFAILED
+    - VALIDATION
+  shutdown:
+  - desc: Issues a shutdown job for a given LinodeID.
+  - params:
+    - linodeid:
+      - desc: ''
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+  update:
+  - desc: Updates a Linode's properties.
+  - params:
+    - alert_bwin_enabled:
+      - desc: Enable the incoming bandwidth email alert
+      - required: false
+      - type: :boolean
+    - alert_bwin_threshold:
+      - desc: Mb/sec
+      - required: false
+      - type: :numeric
+    - alert_bwout_enabled:
+      - desc: Enable the outgoing bandwidth email alert
+      - required: false
+      - type: :boolean
+    - alert_bwout_threshold:
+      - desc: Mb/sec
+      - required: false
+      - type: :numeric
+    - alert_bwquota_enabled:
+      - desc: Enable the bw quote email alert
+      - required: false
+      - type: :boolean
+    - alert_bwquota_threshold:
+      - desc: Percentage of monthly bw quota
+      - required: false
+      - type: :numeric
+    - alert_cpu_enabled:
+      - desc: Enable the cpu usage email alert
+      - required: false
+      - type: :boolean
+    - alert_cpu_threshold:
+      - desc: CPU Alert threshold, percentage 0-800
+      - required: false
+      - type: :numeric
+    - alert_diskio_enabled:
+      - desc: Enable the disk IO email alert
+      - required: false
+      - type: :boolean
+    - alert_diskio_threshold:
+      - desc: IO ops/sec
+      - required: false
+      - type: :numeric
+    - backupweeklyday:
+      - desc: ''
+      - required: false
+      - type: :numeric
+    - backupwindow:
+      - desc: ''
+      - required: false
+      - type: :numeric
+    - label:
+      - desc: This Linode's label
+      - required: false
+      - type: :string
+    - linodeid:
+      - desc: ''
+      - required: true
+      - type: :numeric
+    - lpm_displaygroup:
+      - desc: Display group in the Linode list inside the Linode Manager
+      - required: false
+      - type: :string
+    - ms_ssh_disabled:
+      - desc: ''
+      - required: false
+      - type: :boolean
+    - ms_ssh_ip:
+      - desc: ''
+      - required: false
+      - type: :string
+    - ms_ssh_port:
+      - desc: ''
+      - required: false
+      - type: :numeric
+    - ms_ssh_user:
+      - desc: ''
+      - required: false
+      - type: :string
+    - watchdog:
+      - desc: Enable the Lassie shutdown watchdog
+      - required: false
+      - type: :boolean
+  - throws:
+    - NOTFOUND
+    - VALIDATION
+  webconsoletoken:
+  - desc: Generates a console token starting a web console LISH session for the requesting
+      IP
+  - params:
+    - linodeid:
+      - desc: ''
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+    - VALIDATION
+nodebalancer:
+  config:
+    create:
+    - desc: ''
+    - params:
+      - algorithm:
+        - desc: Balancing algorithm.  One of 'roundrobin', 'leastconn', 'source'
+        - required: false
+        - type: :string
+      - check:
+        - desc: Perform active health checks on the backend nodes.  One of 'connection',
+            'http', 'http_body'
+        - required: false
+        - type: :string
+      - check_attempts:
+        - desc: Number of failed probes before taking a node out of rotation. 1-30
+        - required: false
+        - type: :string
+      - check_body:
+        - desc: When check=http_body, a regex against the expected result body
+        - required: false
+        - type: :string
+      - check_interval:
+        - desc: Seconds between health check probes.  2-3600
+        - required: false
+        - type: :numeric
+      - check_path:
+        - desc: When check=http, the path to request
+        - required: false
+        - type: :string
+      - check_timeout:
+        - desc: Seconds to wait before considering the probe a failure. 1-30.  Must
+            be less than check_interval.
+        - required: false
+        - type: :string
+      - nodebalancerid:
+        - desc: The parent NodeBalancer's ID
+        - required: true
+        - type: :numeric
+      - port:
+        - desc: Port to bind to on the public interfaces. 1-65534
+        - required: false
+        - type: :numeric
+      - protocol:
+        - desc: Either 'tcp', 'http', or 'https'
+        - required: false
+        - type: :string
+      - ssl_cert:
+        - desc: SSL certificate served by the NodeBalancer when the protocol is 'https'
+        - required: false
+        - type: :string
+      - ssl_key:
+        - desc: Unpassphrased private key for the SSL certificate when protocol is
+            'https'
+        - required: false
+        - type: :string
+      - stickiness:
+        - desc: Session persistence.  One of 'none', 'table', 'http_cookie'
+        - required: false
+        - type: :string
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+    delete:
+    - desc: Deletes a NodeBalancer's Config
+    - params:
+      - configid:
+        - desc: The ConfigID to delete
+        - required: true
+        - type: :numeric
+      - nodebalancerid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+    list:
+    - desc: Returns a list of NodeBalancers this user has access or delete to, including
+        their properties
+    - params:
+      - configid:
+        - desc: Limits the list to the specified ConfigID
+        - required: false
+        - type: :numeric
+      - nodebalancerid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+    - throws: []
+    update:
+    - desc: Updates a Config's properties
+    - params:
+      - algorithm:
+        - desc: Balancing algorithm.  One of 'roundrobin', 'leastconn', 'source'
+        - required: false
+        - type: :string
+      - check:
+        - desc: Perform active health checks on the backend nodes.  One of 'connection',
+            'http', 'http_body'
+        - required: false
+        - type: :string
+      - check_attempts:
+        - desc: Number of failed probes before taking a node out of rotation. 1-30
+        - required: false
+        - type: :string
+      - check_body:
+        - desc: When check=http_body, a regex against the expected result body
+        - required: false
+        - type: :string
+      - check_interval:
+        - desc: Seconds between health check probes.  2-3600
+        - required: false
+        - type: :numeric
+      - check_path:
+        - desc: When check=http, the path to request
+        - required: false
+        - type: :string
+      - check_timeout:
+        - desc: Seconds to wait before considering the probe a failure. 1-30.  Must
+            be less than check_interval.
+        - required: false
+        - type: :string
+      - configid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - port:
+        - desc: Port to bind to on the public interfaces. 1-65534
+        - required: false
+        - type: :numeric
+      - protocol:
+        - desc: Either 'tcp', 'http', or 'https'
+        - required: false
+        - type: :string
+      - ssl_cert:
+        - desc: SSL certificate served by the NodeBalancer when the protocol is 'https'
+        - required: false
+        - type: :string
+      - ssl_key:
+        - desc: Unpassphrased private key for the SSL certificate when protocol is
+            'https'
+        - required: false
+        - type: :string
+      - stickiness:
+        - desc: Session persistence.  One of 'none', 'table', 'http_cookie'
+        - required: false
+        - type: :string
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+  create:
+  - desc: ''
+  - params:
+    - clientconnthrottle:
+      - desc: To help mitigate abuse, throttle connections per second, per client
+          IP. 0 to disable. Max of 20.
+      - required: false
+      - type: :numeric
+    - datacenterid:
+      - desc: The DatacenterID from avail.datacenters() where you wish to place this
+          new NodeBalancer
+      - required: true
+      - type: :numeric
+    - label:
+      - desc: This NodeBalancer's label
+      - required: false
+      - type: :string
+  - throws:
+    - NOACCESS
+    - CCFAILED
+    - VALIDATION
+  delete:
+  - desc: Immediately removes a NodeBalancer from your account and issues a pro-rated
+      credit back to your account, if applicable.
+  - params:
+    - nodebalancerid:
+      - desc: The NodeBalancerID to delete
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+  list:
+  - desc: Returns a list of NodeBalancers this user has access or delete to, including
+      their properties
+  - params:
+    - nodebalancerid:
+      - desc: Limits the list to the specified NodeBalancerID
+      - required: false
+      - type: :numeric
+  - throws: []
+  node:
+    create:
+    - desc: ''
+    - params:
+      - address:
+        - desc: The address:port combination used to communicate with this Node
+        - required: true
+        - type: :string
+      - configid:
+        - desc: The parent ConfigID to attach this Node to
+        - required: true
+        - type: :numeric
+      - label:
+        - desc: This backend Node's label
+        - required: true
+        - type: :string
+      - mode:
+        - desc: The connections mode for this node.  One of 'accept', 'reject', or
+            'drain'
+        - required: false
+        - type: :string
+      - weight:
+        - desc: Load balancing weight, 1-255. Higher means more connections.
+        - required: false
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+    delete:
+    - desc: Deletes a Node from a NodeBalancer Config
+    - params:
+      - nodeid:
+        - desc: The NodeID to delete
+        - required: true
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+    list:
+    - desc: Returns a list of Nodes associated with a NodeBalancer Config
+    - params:
+      - configid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - nodeid:
+        - desc: Limits the list to the specified NodeID
+        - required: false
+        - type: :numeric
+    - throws: []
+    update:
+    - desc: Updates a Node's properties
+    - params:
+      - address:
+        - desc: The address:port combination used to communicate with this Node
+        - required: false
+        - type: :string
+      - label:
+        - desc: This backend Node's label
+        - required: false
+        - type: :string
+      - mode:
+        - desc: The connections mode for this node.  One of 'accept', 'reject', or
+            'drain'
+        - required: false
+        - type: :string
+      - nodeid:
+        - desc: ''
+        - required: true
+        - type: :numeric
+      - weight:
+        - desc: Load balancing weight, 1-255. Higher means more connections.
+        - required: false
+        - type: :numeric
+    - throws:
+      - NOTFOUND
+      - VALIDATION
+  update:
+  - desc: Updates a NodeBalancer's properties
+  - params:
+    - clientconnthrottle:
+      - desc: To help mitigate abuse, throttle connections per second, per client
+          IP. 0 to disable. Max of 20.
+      - required: false
+      - type: :numeric
+    - label:
+      - desc: This NodeBalancer's label
+      - required: false
+      - type: :string
+    - nodebalancerid:
+      - desc: ''
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+    - VALIDATION
+stackscript:
+  create:
+  - desc: Create a StackScript.
+  - params:
+    - description:
+      - desc: ''
+      - required: false
+      - type: :string
+    - distributionidlist:
+      - desc: 'Comma delimited list of DistributionIDs that this script works on '
+      - required: true
+      - type: :string
+    - ispublic:
+      - desc: Whether this StackScript is published in the Library, for everyone to
+          use
+      - required: false
+      - type: :boolean
+    - label:
+      - desc: The Label for this StackScript
+      - required: true
+      - type: :string
+    - rev_note:
+      - desc: ''
+      - required: false
+      - type: :string
+    - script:
+      - desc: The actual script
+      - required: true
+      - type: :string
+  - throws:
+    - NOACCESS
+    - VALIDATION
+  delete:
+  - desc: ''
+  - params:
+    - stackscriptid:
+      - desc: ''
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+  list:
+  - desc: Lists StackScripts you have access to.
+  - params:
+    - stackscriptid:
+      - desc: Limits the list to the specified StackScriptID
+      - required: false
+      - type: :numeric
+  - throws: []
+  update:
+  - desc: Update a StackScript.
+  - params:
+    - description:
+      - desc: ''
+      - required: false
+      - type: :string
+    - distributionidlist:
+      - desc: 'Comma delimited list of DistributionIDs that this script works on '
+      - required: false
+      - type: :string
+    - ispublic:
+      - desc: Whether this StackScript is published in the Library, for everyone to
+          use
+      - required: false
+      - type: :boolean
+    - label:
+      - desc: The Label for this StackScript
+      - required: false
+      - type: :string
+    - rev_note:
+      - desc: ''
+      - required: false
+      - type: :string
+    - script:
+      - desc: The actual script
+      - required: false
+      - type: :string
+    - stackscriptid:
+      - desc: ''
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+    - VALIDATION
+test:
+  echo:
+  - desc: Echos back parameters that were passed in.
+  - params: []
+  - throws: []
+user:
+  getapikey:
+  - desc: Authenticates a Linode Manager user against their username, password, and
+      two-factor token (when enabled), and then returns a new API key, which can be
+      used until it expires.  The number of active keys is limited to 20.
+  - params:
+    - expires:
+      - desc: Number of hours the key will remain valid, between 0 and 8760. 0 means
+          no expiration. Defaults to 168.
+      - required: false
+      - type: :numeric
+    - label:
+      - desc: An optional label for this key.
+      - required: false
+      - type: :string
+    - password:
+      - desc: ''
+      - required: true
+      - type: :string
+    - token:
+      - desc: Required when two-factor authentication is enabled.
+      - required: false
+      - type: :string
+    - username:
+      - desc: ''
+      - required: true
+      - type: :string
+  - throws:
+    - AUTHFAIL
+    - " NEEDTOKEN"
+    - " PASSWORDEXPIRED"
+    - " KEYLIMIT"

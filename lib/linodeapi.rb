@@ -18,7 +18,7 @@ module LinodeAPI
     end
 
     def spec
-      @spec ||= { type: 'group', subs: fetch_spec }
+      @spec ||= { type: :group, subs: fetch_spec }
     end
 
     private

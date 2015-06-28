@@ -14,6 +14,7 @@ module LinodeAPI
     def initialize(params = {})
       self.class.base_uri params.fetch(:endpoint, DEFAULT_ENDPOINT)
       @names = params.fetch(:names) { [] }
+      @debug = params.fetch(:debug) { ENV['LINODEAPI_DEBUG'] }
       @spec = params.fetch(:spec) { LinodeAPI.spec }
       @apikey = params.fetch(:apikey) { authenticate(params).first }
     end
@@ -49,8 +50,8 @@ module LinodeAPI
       group = Raw.new(
         spec: @spec[:subs][method],
         apikey: @apikey,
-        username: @username,
-        names: @names + [method]
+        names: @names + [method],
+        debug: @debug
       )
       name = "@#{method}".to_sym
       instance_variable_set name, group
@@ -67,6 +68,7 @@ module LinodeAPI
       spec = @spec[:subs][method]
       method = (@names + [method.to_s]).join '.'
       options = self.class.validate method, spec[:params], params
+      log("Calling #{method} with #{options}")
       options.merge! api_key: @apikey, api_action: method
       error_check self.class.post('', body: options)
     end
@@ -77,6 +79,10 @@ module LinodeAPI
       data = resp.parsed_response
       fail('Invalid API response received') if data.nil?
       self.class.parse data
+    end
+
+    def log(line)
+      puts line
     end
 
     def self.parse(resp)

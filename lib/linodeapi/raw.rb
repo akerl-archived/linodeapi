@@ -68,7 +68,15 @@ module LinodeAPI
       method = (@names + [method.to_s]).join '.'
       options = self.class.validate method, spec[:params], params
       options.merge! api_key: @apikey, api_action: method
-      self.class.parse self.class.post('', body: options).parsed_response
+      error_check self.class.post('', body: options)
+    end
+
+    def error_check(resp)
+      code = resp.code
+      fail("API threw HTTP error code #{code}") unless code == 200
+      data = resp.parsed_response
+      fail('Invalid API response received') if data.nil?
+      self.class.parse data
     end
 
     def self.parse(resp)

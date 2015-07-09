@@ -434,6 +434,10 @@ linode:
           new Linode
       - required: true
       - type: :numeric
+    - hypervisor:
+      - desc: ''
+      - required: false
+      - type: :string
     - linodeid:
       - desc: The LinodeID that you want cloned
       - required: true
@@ -479,14 +483,18 @@ linode:
         - desc: Enable the disableUpdateDB filesystem helper
         - required: false
         - type: :boolean
+      - helper_distro:
+        - desc: Enable the Distro filesystem helper.  Corrects fstab and inittab/upstart
+            entries depending on the kernel you're booting.  You want this.
+        - required: false
+        - type: :boolean
       - helper_network:
         - desc: Automatically creates network configuration files for your distro
             and places them into your filesystem.
         - required: false
         - type: :boolean
       - helper_xen:
-        - desc: Enable the Xen filesystem helper.  Corrects fstab and inittab/upstart
-            entries depending on the kernel you're booting.  You want this.
+        - desc: Deprecated - use helper_distro.
         - required: false
         - type: :boolean
       - kernelid:
@@ -520,6 +528,10 @@ linode:
         - type: :boolean
       - runlevel:
         - desc: 'One of ''default'', ''single'', ''binbash'' '
+        - required: false
+        - type: :string
+      - virt_mode:
+        - desc: 'Controls the virtualization mode. One of ''paravirt'', ''fullvirt'' '
         - required: false
         - type: :string
     - throws:
@@ -580,14 +592,18 @@ linode:
         - desc: Enable the disableUpdateDB filesystem helper
         - required: false
         - type: :boolean
+      - helper_distro:
+        - desc: Enable the Distro filesystem helper.  Corrects fstab and inittab/upstart
+            entries depending on the kernel you're booting.  You want this.
+        - required: false
+        - type: :boolean
       - helper_network:
         - desc: Automatically creates network configuration files for your distro
             and places them into your filesystem.
         - required: false
         - type: :boolean
       - helper_xen:
-        - desc: Enable the Xen filesystem helper.  Corrects fstab and inittab/upstart
-            entries depending on the kernel you're booting.  You want this.
+        - desc: Deprecated - use helper_distro.
         - required: false
         - type: :boolean
       - kernelid:
@@ -621,6 +637,10 @@ linode:
         - type: :boolean
       - runlevel:
         - desc: 'One of ''default'', ''single'', ''binbash'' '
+        - required: false
+        - type: :string
+      - virt_mode:
+        - desc: 'Controls the virtualization mode. One of ''paravirt'', ''fullvirt'' '
         - required: false
         - type: :string
     - throws:
@@ -674,14 +694,6 @@ linode:
         - desc: ''
         - required: false
         - type: :numeric
-      - isreadonly:
-        - desc: Enable forced read-only for this Disk
-        - required: false
-        - type: :boolean
-      - label:
-        - desc: The display label for this Disk
-        - required: true
-        - type: :string
       - linodeid:
         - desc: ''
         - required: true
@@ -693,15 +705,6 @@ linode:
       - rootsshkey:
         - desc: ''
         - required: false
-        - type: :string
-      - size:
-        - desc: The size in MB of this Disk.
-        - required: true
-        - type: :numeric
-      - type:
-        - desc: 'The formatted type of this disk.  Valid types are: ext3, ext4, swap,
-            raw'
-        - required: true
         - type: :string
     - throws:
       - NOTFOUND
@@ -896,14 +899,6 @@ linode:
         - desc: ''
         - required: true
         - type: :numeric
-      - isreadonly:
-        - desc: Enable forced read-only for this Disk
-        - required: false
-        - type: :boolean
-      - label:
-        - desc: The display label for this Disk
-        - required: false
-        - type: :string
       - linodeid:
         - desc: ''
         - required: false
@@ -1174,13 +1169,19 @@ nodebalancer:
         - required: false
         - type: :string
       - check_body:
-        - desc: When check=http_body, a regex against the expected result body
+        - desc: When check=http, a regex to match within the first 16,384 bytes of
+            the response body
         - required: false
         - type: :string
       - check_interval:
         - desc: Seconds between health check probes.  2-3600
         - required: false
         - type: :numeric
+      - check_passive:
+        - desc: Enable passive checks based on observing communication with back-end
+            nodes.
+        - required: false
+        - type: :boolean
       - check_path:
         - desc: When check=http, the path to request
         - required: false
@@ -1261,13 +1262,19 @@ nodebalancer:
         - required: false
         - type: :string
       - check_body:
-        - desc: When check=http_body, a regex against the expected result body
+        - desc: When check=http, a regex to match within the first 16,384 bytes of
+            the response body
         - required: false
         - type: :string
       - check_interval:
         - desc: Seconds between health check probes.  2-3600
         - required: false
         - type: :numeric
+      - check_passive:
+        - desc: Enable passive checks based on observing communication with back-end
+            nodes.
+        - required: false
+        - type: :boolean
       - check_path:
         - desc: When check=http, the path to request
         - required: false
@@ -1440,6 +1447,117 @@ nodebalancer:
   - throws:
     - NOTFOUND
     - VALIDATION
+professionalservices:
+  scope:
+    create:
+    - desc: Creates a new Professional Services scope submission
+    - params:
+      - application_quantity:
+        - desc: How many separate applications or websites are involved in this migration?
+        - required: false
+        - type: :string
+      - content_management:
+        - desc: Centralized interfaces for editing, organizing, and publishing content
+        - required: false
+        - type: :string
+      - crossover:
+        - desc: These can assist in providing reliable crossover--failures of individual
+            components can be transparent to the application.
+        - required: false
+        - type: :string
+      - current_provider:
+        - desc: ''
+        - required: false
+        - type: :string
+      - customer_name:
+        - desc: ''
+        - required: false
+        - type: :string
+      - database_server:
+        - desc: Generally used by applications to provide an organized way to capture
+            and manipulate data
+        - required: false
+        - type: :string
+      - email_address:
+        - desc: ''
+        - required: false
+        - type: :string
+      - linode_datacenter:
+        - desc: Which datacenters would you like your Linodes to be deployed in?
+        - required: false
+        - type: :string
+      - linode_plan:
+        - desc: Which Linode plans would you like to deploy?
+        - required: false
+        - type: :string
+      - mail_filtering:
+        - desc: Services here manipulate recieved messages in various ways
+        - required: false
+        - type: :string
+      - mail_retrieval:
+        - desc: User mail clients connect to these to retrieve delivered mail
+        - required: false
+        - type: :string
+      - mail_transfer:
+        - desc: Mail transfer agents facilitate message transfer between servers
+        - required: false
+        - type: :string
+      - managed:
+        - desc: ''
+        - required: false
+        - type: :string
+      - monitoring:
+        - desc: Constant monitoring of your deployed systems--these can also provide
+            automatic notifications for service failures.
+        - required: false
+        - type: :string
+      - notes:
+        - desc: ''
+        - required: false
+        - type: :string
+      - phone_number:
+        - desc: ''
+        - required: false
+        - type: :string
+      - provider_access:
+        - desc: What types of server access do you have at your current provider?
+        - required: false
+        - type: :string
+      - replication:
+        - desc: Redundant services often have shared state--replication automatically
+            propagates state changes between individual components.
+        - required: false
+        - type: :string
+      - requested_service:
+        - desc: ''
+        - required: false
+        - type: :string
+      - server_quantity:
+        - desc: How many separate servers are involved in this migration?
+        - required: false
+        - type: :string
+      - system_administration:
+        - desc: Various web interfaces for performing system administration tasks
+        - required: false
+        - type: :string
+      - ticket_number:
+        - desc: ''
+        - required: false
+        - type: :string
+      - web_cache:
+        - desc: Caching mechanisms provide temporary storage for web requests--cached
+            content can generally be retrieved faster.
+        - required: false
+        - type: :string
+      - web_server:
+        - desc: These provide network protocol handling for hosting websites.
+        - required: false
+        - type: :string
+      - webmail:
+        - desc: Access and administrate mail via web interfaces
+        - required: false
+        - type: :string
+    - throws: []
 stackscript:
   create:
   - desc: Create a StackScript.
@@ -1558,6 +1676,6 @@ user:
       - type: :string
   - throws:
     - AUTHFAIL
-    - " NEEDTOKEN"
-    - " PASSWORDEXPIRED"
-    - " KEYLIMIT"
+    - NEEDTOKEN
+    - PASSWORDEXPIRED
+    - KEYLIMIT

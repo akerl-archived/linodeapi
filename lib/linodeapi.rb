@@ -10,13 +10,6 @@ module LinodeAPI
   SPEC_URL = 'https://api.linode.com/?api_action=api.spec'
 
   class << self
-    ##
-    # Insert a helper .new() method for creating a new API object
-
-    def new(*args)
-      self::API.new(*args)
-    end
-
     def spec
       @spec ||= { type: :group, subs: fetch_spec }
     end

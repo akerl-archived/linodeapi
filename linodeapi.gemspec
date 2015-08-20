@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'linodeapi'
-  s.version     = '0.2.0'
+  s.version     = '0.2.1'
   s.date        = Time.now.strftime("%Y-%m-%d")
 
   s.summary     = 'Linode API wrapper'

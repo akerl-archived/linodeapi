@@ -67,4 +67,3 @@ module LinodeAPI
 end
 
 require 'linodeapi/raw'
-require 'linodeapi/api'

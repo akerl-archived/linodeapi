@@ -12,6 +12,48 @@ Ruby API wrapper for the [Linode API](https://www.linode.com/api)
 
 ## Usage
 
+Create an API object from the LinodeAPI::Raw class, by providing it with either an API key or username and password:
+
+```
+require 'linodeapi'
+
+api_one = LinodeAPI::Raw(apikey: 'YOUR_KEY_HERE')
+api_two = LinodeAPI::Raw(username: 'akerl', password: 'cyberpond')
+```
+
+The Raw API object is a faithful representation of Linode's [API spec](https://www.linode.com/api/utility/api.spec), parsed directly from the upstream source at runtime. Calls can be made using the methods shown in Linode's [API docs](https://www.linode.com/api):
+
+```
+# cat list.rb
+require 'linodeapi'
+
+api = LinodeAPI::Raw.new(apikey: 'KEY')
+
+result = api.linode.list
+
+puts "#{result.size} Linodes found: #{result.map(&:label).join(', ')}"
+p result.first
+```
+
+```
+# ruby list.rb
+6 Linodes found: miro, olhado, quara, grego, ela, quim
+#<OpenStruct alert_cpu_enabled=0, alert_bwin_enabled=0, alert_bwquota_enabled=0, alert_diskio_threshold=1000, backupwindow=4, watchdog=1, distributionvendor="Arch", datacenterid=6, status=1, alert_diskio_enabled=0, create_dt="2014-07-30 20:09:12.0", totalhd=49152, alert_bwquota_threshold=80, totalram=2048, alert_bwin_threshold=5, linodeid=591319, alert_bwout_threshold=5, alert_bwout_enabled=0, backupsenabled=0, alert_cpu_threshold=90, planid=2, backupweeklyday=0, label="miro", lpm_displaygroup="cluster", totalxfer=3000>
+```
+
+Arguments passed in are named just like in the docs:
+
+```
+api.linode.ip.list(linodeid: 591319)
+```
+
+The library will raise an exception if you exclude a required parameter:
+
+```
+api.linode.create
+# ArgumentError: linode.create requires planid
+```
+
 ## Installation
 
     gem install linodeapi

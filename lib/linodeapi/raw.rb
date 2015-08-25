@@ -15,7 +15,7 @@ module LinodeAPI
       self.class.base_uri params.fetch(:endpoint, DEFAULT_ENDPOINT)
       @names = params.fetch(:names) { [] }
       @spec = params.fetch(:spec) { LinodeAPI.spec }
-      @apikey = params.fetch(:apikey) { authenticate(params).first }
+      @apikey = params.fetch(:apikey) { authenticate(params) }
     end
 
     def respond_to?(method, include_private = false)
@@ -34,7 +34,7 @@ module LinodeAPI
       unless (params.values_at :username, :password).all?
         fail ArgumentError, 'You must provide either an API key or user/pass'
       end
-      user.getapikey(params).values_at :api_key
+      user.getapikey(params).api_key
     end
 
     def method_missing(method, *args, &block)

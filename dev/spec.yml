@@ -1216,6 +1216,10 @@ nodebalancer:
             be less than check_interval.
         - required: false
         - type: :string
+      - cipher_suite:
+        - desc: SSL cipher suite to enforce. One of 'recommended', 'legacy'
+        - required: false
+        - type: :string
       - nodebalancerid:
         - desc: The parent NodeBalancer's ID
         - required: true
@@ -1307,6 +1311,10 @@ nodebalancer:
       - check_timeout:
         - desc: Seconds to wait before considering the probe a failure. 1-30.  Must
             be less than check_interval.
+        - required: false
+        - type: :string
+      - cipher_suite:
+        - desc: SSL cipher suite to enforce. One of 'recommended', 'legacy'
         - required: false
         - type: :string
       - configid:

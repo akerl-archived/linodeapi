@@ -17,8 +17,8 @@ Create an API object from the LinodeAPI::Raw class, by providing it with either 
 ```
 require 'linodeapi'
 
-api_one = LinodeAPI::Raw(apikey: 'YOUR_KEY_HERE')
-api_two = LinodeAPI::Raw(username: 'akerl', password: 'cyberpond')
+api_one = LinodeAPI::Raw.new(apikey: 'YOUR_KEY_HERE')
+api_two = LinodeAPI::Raw.new(username: 'akerl', password: 'cyberpond')
 ```
 
 The Raw API object is a faithful representation of Linode's [API spec](https://www.linode.com/api/utility/api.spec), parsed directly from the upstream source at runtime. Calls can be made using the methods shown in Linode's [API docs](https://www.linode.com/api):

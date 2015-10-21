@@ -3,9 +3,9 @@ linodeapi
 
 [![Gem Version](https://img.shields.io/gem/v/linodeapi.svg)](https://rubygems.org/gems/linodeapi)
 [![Dependency Status](https://img.shields.io/gemnasium/akerl/linodeapi.svg)](https://gemnasium.com/akerl/linodeapi)
-[![Code Climate](https://img.shields.io/codeclimate/github/akerl/linodeapi.svg)](https://codeclimate.com/github/akerl/linodeapi)
-[![Coverage Status](https://img.shields.io/coveralls/akerl/linodeapi.svg)](https://coveralls.io/r/akerl/linodeapi)
-[![Build Status](https://img.shields.io/travis/akerl/linodeapi.svg)](https://travis-ci.org/akerl/linodeapi)
+[![Build Status](https://img.shields.io/circleci/project/akerl/linodeapi.svg)](https://circleci.com/gh/akerl/linodeapi)
+[![Coverage Status](https://img.shields.io/codecov/c/github/akerl/linodeapi.svg)](https://codecov.io/github/akerl/linodeapi)
+[![Code Quality](https://img.shields.io/codacy/60b77ea8214241b5ac970bcdfd584587.svg)](https://www.codacy.com/app/akerl/linodeapi)
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-green.svg)](https://tldrlegal.com/license/mit-license)
 
 Ruby API wrapper for the [Linode API](https://www.linode.com/api)

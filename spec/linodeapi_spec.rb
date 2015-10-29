@@ -1,7 +1,16 @@
 require 'spec_helper'
 
 describe LinodeAPI do
-  it 'is' do
-    expect(1).to eql 1
+  it 'has a default endpoint' do
+    expect(LinodeAPI::DEFAULT_ENDPOINT).to be_an_instance_of String
+  end
+
+  it 'has a spec URL' do
+    expect(LinodeAPI::SPEC_URL).to be_an_instance_of String
+  end
+
+  it 'makes the spec available' do
+    expect(LinodeAPI.spec[:subs]).to be_an_instance_of Hash
+    expect(LinodeAPI.spec[:subs][:linode][:subs][:create][:type]).to eql :call
   end
 end

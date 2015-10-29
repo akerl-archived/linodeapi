@@ -106,7 +106,7 @@ module LinodeAPI
   private
 
   VALIDATION_METHODS = {
-    boolean: proc { |e| e == true },
+    boolean: proc { |e| !!e }, # rubocop:disable Style/DoubleNegation
     numeric: proc { |e| Integer(e) },
     string: proc(&:to_s)
   }

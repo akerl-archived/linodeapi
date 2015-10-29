@@ -55,4 +55,18 @@ describe LinodeAPI::Raw do
   it 'fails if a required param is missing' do
     expect { subject.linode.create }.to raise_error ArgumentError
   end
+
+  it 'converts boolean params to true/false' do
+    VCR.use_cassette('kernel_list') do
+      expect(
+        subject.avail.kernels(isxen: 'word').all? { |x| x.isxen == 1 }
+      ).to be_truthy
+    end
+  end
+
+  it 'raises a validation error on invalid numeric params' do
+    expect do
+      subject.avail.linodeplans(planid: 'word')
+    end.to raise_error ArgumentError
+  end
 end

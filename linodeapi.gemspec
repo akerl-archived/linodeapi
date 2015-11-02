@@ -21,5 +21,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec', '~> 3.3.0'
   s.add_development_dependency 'fuubar', '~> 2.0.0'
   s.add_development_dependency 'webmock', '~> 1.22.0'
-  s.add_development_dependency 'vcr', '~> 2.9.2'
+  s.add_development_dependency 'vcr', '~> 3.0.0'
 end

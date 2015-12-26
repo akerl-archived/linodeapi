@@ -13,4 +13,8 @@ describe LinodeAPI do
     expect(LinodeAPI.spec[:subs]).to be_an_instance_of Hash
     expect(LinodeAPI.spec[:subs][:linode][:subs][:create][:type]).to eql :call
   end
+
+  it 'makes the spec version available' do
+    expect(LinodeAPI.spec_version).to match(/[\d.]*/)
+  end
 end

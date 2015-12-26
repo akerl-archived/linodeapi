@@ -11,14 +11,21 @@ module LinodeAPI
 
   class << self
     def spec
-      @spec ||= { type: :group, subs: fetch_spec }
+      @spec ||= { type: :group, subs: parse_spec }
+    end
+
+    def spec_version
+      @spec_version ||= raw_spec['DATA']['VERSION'].to_s
     end
 
     private
 
-    def fetch_spec
-      raw = JSON.parse(HTTParty.get(SPEC_URL).body)['DATA']['METHODS']
-      raw.each_with_object({}) do |(method, info), spec|
+    def raw_spec
+      @raw_spec ||= JSON.parse(HTTParty.get(SPEC_URL).body)
+    end
+
+    def parse_spec
+      raw_spec['DATA']['METHODS'].each_with_object({}) do |(method, info), spec|
         name, groups = parse_method(method)
         params = parse_params(info['PARAMETERS'])
         add_call(spec, groups, name, params, info)

@@ -4,6 +4,7 @@ require 'linodeapi'
 require 'yaml'
 
 SPEC_FILE = $ARGV.first || 'dev/spec.yml'
+VERSION_FILE = File.join(File.dirname(SPEC_FILE), 'version')
 
 def parse_node(node)
   return clean_node(node) if node[:type] == :call
@@ -23,3 +24,4 @@ end
 result = parse_node(LinodeAPI.spec)
 
 File.open(SPEC_FILE, 'w') { |fh| fh << YAML.dump(result) }
+File.open(VERSION_FILE, 'w') { |fh| fh << LinodeAPI.spec_version }

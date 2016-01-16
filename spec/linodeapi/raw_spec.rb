@@ -42,8 +42,8 @@ describe LinodeAPI::Raw do
   end
 
   it 'accurately responds to .respond_to?' do
-    expect(subject.respond_to? :linode).to be_truthy
-    expect(subject.respond_to? :list).to be_falsey
+    expect(subject.respond_to?(:linode)).to be_truthy
+    expect(subject.respond_to?(:list)).to be_falsey
   end
 
   it 'returns arrays for list calls' do

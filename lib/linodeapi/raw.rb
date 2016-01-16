@@ -25,7 +25,7 @@ module LinodeAPI
     def to_s
       'LinodeAPI::Raw object'
     end
-    alias_method :inspect, :to_s
+    alias inspect to_s
 
     private
 
@@ -67,7 +67,8 @@ module LinodeAPI
       spec = @spec[:subs][method]
       method = (@names + [method.to_s]).join '.'
       options = self.class.validate method, spec[:params], params
-      options.merge! api_key: @apikey, api_action: method
+      options[:api_key] = @apikey
+      options[:api_action] = method
       error_check self.class.post('', body: options)
     end
 
@@ -79,35 +80,35 @@ module LinodeAPI
       self.class.parse data
     end
 
-    def self.parse(resp)
-      resp['ERRORARRAY'].reject! { |x| x['ERRORCODE'].zero? }
-      unless resp['ERRORARRAY'].empty?
-        fail "API Error on #{resp['ACTION']}: #{resp['ERRORARRAY']}"
+    class << self
+      def parse(resp)
+        resp['ERRORARRAY'].reject! { |x| x['ERRORCODE'].zero? }
+        unless resp['ERRORARRAY'].empty?
+          fail "API Error on #{resp['ACTION']}: #{resp['ERRORARRAY']}"
+        end
+        data = resp['DATA']
+        data.is_a?(Hash) ? clean(data) : data.map { |x| clean x }
       end
-      data = resp['DATA']
-      data.is_a?(Hash) ? clean(data) : data.map { |x| clean x }
-    end
 
-    def self.clean(object)
-      OpenStruct.new(Hash[object.map { |k, v| [k.downcase.to_sym, v] }])
-    end
+      def clean(object)
+        OpenStruct.new(Hash[object.map { |k, v| [k.downcase.to_sym, v] }])
+      end
 
-    def self.validate(method, spec, given)
-      spec.each_with_object({}) do |(param, info), options|
-        if given.include? param
-          options[param] = VALIDATION_METHODS[info[:type]].call given[param]
-        else
-          fail ArgumentError, "#{method} requires #{param}" if info[:required]
+      def validate(method, spec, given)
+        spec.each_with_object({}) do |(param, info), options|
+          if given.include? param
+            options[param] = VALIDATION_METHODS[info[:type]].call given[param]
+          elsif info[:required]
+            fail ArgumentError, "#{method} requires #{param}"
+          end
         end
       end
     end
   end
 
-  private
-
   VALIDATION_METHODS = {
     boolean: proc { |e| !!e }, # rubocop:disable Style/DoubleNegation
     numeric: proc { |e| Integer(e) },
     string: proc(&:to_s)
-  }
+  }.freeze
 end

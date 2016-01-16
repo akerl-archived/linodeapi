@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'httparty'
 
 ##
@@ -6,8 +7,8 @@ module LinodeAPI
   ##
   # Default API endpoint
 
-  DEFAULT_ENDPOINT = 'https://api.linode.com/'
-  SPEC_URL = 'https://api.linode.com/?api_action=api.spec'
+  DEFAULT_ENDPOINT = 'https://api.linode.com/'.freeze
+  SPEC_URL = 'https://api.linode.com/?api_action=api.spec'.freeze
 
   class << self
     def spec

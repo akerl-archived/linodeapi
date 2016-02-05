@@ -690,6 +690,14 @@ linode:
         - desc: ''
         - required: false
         - type: :numeric
+      - isreadonly:
+        - desc: Enable forced read-only for this Disk
+        - required: false
+        - type: :boolean
+      - label:
+        - desc: The display label for this Disk
+        - required: true
+        - type: :string
       - linodeid:
         - desc: ''
         - required: true
@@ -701,6 +709,15 @@ linode:
       - rootsshkey:
         - desc: ''
         - required: false
+        - type: :string
+      - size:
+        - desc: The size in MB of this Disk.
+        - required: true
+        - type: :numeric
+      - type:
+        - desc: 'The formatted type of this disk.  Valid types are: ext3, ext4, swap,
+            raw'
+        - required: true
         - type: :string
     - throws:
       - NOTFOUND
@@ -895,6 +912,14 @@ linode:
         - desc: ''
         - required: true
         - type: :numeric
+      - isreadonly:
+        - desc: Enable forced read-only for this Disk
+        - required: false
+        - type: :boolean
+      - label:
+        - desc: The display label for this Disk
+        - required: false
+        - type: :string
       - linodeid:
         - desc: ''
         - required: false

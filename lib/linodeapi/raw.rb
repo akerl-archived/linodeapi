@@ -32,7 +32,7 @@ module LinodeAPI
     def authenticate(params = {})
       return [] unless @names.empty?
       unless (params.values_at :username, :password).all?
-        fail ArgumentError, 'You must provide either an API key or user/pass'
+        raise ArgumentError, 'You must provide either an API key or user/pass'
       end
       user.getapikey(params).api_key
     end
@@ -74,9 +74,9 @@ module LinodeAPI
 
     def error_check(resp)
       code = resp.code
-      fail("API threw HTTP error code #{code}") unless code == 200
+      raise("API threw HTTP error code #{code}") unless code == 200
       data = resp.parsed_response
-      fail('Invalid API response received') if data.nil?
+      raise('Invalid API response received') if data.nil?
       self.class.parse data
     end
 
@@ -84,7 +84,7 @@ module LinodeAPI
       def parse(resp)
         resp['ERRORARRAY'].reject! { |x| x['ERRORCODE'].zero? }
         unless resp['ERRORARRAY'].empty?
-          fail "API Error on #{resp['ACTION']}: #{resp['ERRORARRAY']}"
+          raise "API Error on #{resp['ACTION']}: #{resp['ERRORARRAY']}"
         end
         data = resp['DATA']
         data.is_a?(Hash) ? clean(data) : data.map { |x| clean x }
@@ -99,7 +99,7 @@ module LinodeAPI
           if given.include? param
             options[param] = VALIDATION_METHODS[info[:type]].call given[param]
           elsif info[:required]
-            fail ArgumentError, "#{method} requires #{param}"
+            raise ArgumentError, "#{method} requires #{param}"
           end
         end
       end

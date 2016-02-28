@@ -2,12 +2,13 @@
 
 require 'linodeapi'
 require 'yaml'
+require 'digest'
 
-SPEC_FILE = $ARGV.first || 'dev/spec.yml'
+SPEC_FILE = 'dev/spec.yml'
 VERSION_FILE = File.join(File.dirname(SPEC_FILE), 'version')
 
 def parse_node(node)
-  return clean_node(node) if node[:type] == :call
+  return clean_node(node.dup) if node[:type] == :call
   Hash[node[:subs].sort.map { |k, v| [k.to_s, parse_node(v)] }]
 end
 
@@ -21,7 +22,31 @@ def hash_to_array(hash)
   hash.to_a.sort.map { |x| Hash[x.first.to_s, hash_to_array(x.last)] }
 end
 
-result = parse_node(LinodeAPI.spec)
+def write_changes
+  File.open(SPEC_FILE, 'w') { |fh| fh << YAML.dump(parse_node(LinodeAPI.spec)) }
+  File.open(VERSION_FILE, 'w') { |fh| fh << LinodeAPI.spec_version }
+end
 
-File.open(SPEC_FILE, 'w') { |fh| fh << YAML.dump(result) }
-File.open(VERSION_FILE, 'w') { |fh| fh << LinodeAPI.spec_version }
+def sha(string)
+  Digest::SHA256.hexdigest string
+end
+
+def check_change(old, new)
+  [old == new, old, new]
+end
+
+def all_changes
+  {
+    'version' => check_change(
+      File.read(VERSION_FILE).chomp,
+      LinodeAPI.spec_version
+    ),
+    'spec' => check_change(
+      sha(File.read(SPEC_FILE)),
+      sha(YAML.dump(parse_node(LinodeAPI.spec)))
+    )
+  }
+end
+
+puts YAML.dump(all_changes)
+write_changes unless ARGV.first == '--noop'

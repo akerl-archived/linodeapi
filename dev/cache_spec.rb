@@ -4,7 +4,7 @@ require 'linodeapi'
 require 'yaml'
 require 'digest'
 
-SPEC_FILE = 'dev/spec.yml'
+SPEC_FILE = 'dev/spec.yml'.freeze
 VERSION_FILE = File.join(File.dirname(SPEC_FILE), 'version')
 
 def parse_node(node)

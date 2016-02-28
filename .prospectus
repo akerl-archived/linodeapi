@@ -1,3 +1,5 @@
+require 'yaml'
+
 item do
   expected do
     static
@@ -7,5 +9,23 @@ item do
   actual do
     gemnasium
     slug 'akerl/linodeapi'
+  end
+
+  deps do
+    YAML.load(`./dev/cache_spec.rb --noop`).each do |item_name, (old, new)|
+      item do
+        name "api.spec.#{item_name}"
+
+        expected do
+          static
+          set new
+        end
+
+        actual do
+          static
+          set old
+        end
+      end
+    end
   end
 end

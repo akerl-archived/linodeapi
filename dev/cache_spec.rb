@@ -28,23 +28,19 @@ def write_changes
 end
 
 def sha(string)
-  Digest::SHA256.hexdigest string
-end
-
-def check_change(old, new)
-  [old == new, old, new]
+  Digest::SHA256.hexdigest(string)[0..7]
 end
 
 def all_changes
   {
-    'version' => check_change(
+    'version' => [
       File.read(VERSION_FILE).chomp,
       LinodeAPI.spec_version
-    ),
-    'spec' => check_change(
+    ],
+    'spec' => [
       sha(File.read(SPEC_FILE)),
       sha(YAML.dump(parse_node(LinodeAPI.spec)))
-    )
+    ]
   }
 end
 

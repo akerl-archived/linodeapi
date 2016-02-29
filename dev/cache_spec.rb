@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'mercenary'
 require 'linodeapi'
 require 'yaml'
 require 'digest'
@@ -44,5 +45,16 @@ def all_changes
   }
 end
 
-puts YAML.dump(all_changes)
-write_changes unless ARGV.first == '--noop'
+Mercenary.program(:cache_spec) do |p|
+  p.version '0.0.1'
+  p.description 'Update cache file of api.apec'
+  p.syntax "#{$0} [options]"
+
+  p.option :noop, '-n', '--noop', 'No-op run (will not update the cached file'
+  p.option :quiet, '-q', '--quiet', 'Quiet mode'
+
+  p.action do |_, options|
+    puts YAML.dump(all_changes) unless options[:quiet]
+    write_changes unless options[:noop]
+  end
+end

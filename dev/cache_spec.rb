@@ -48,7 +48,7 @@ end
 Mercenary.program(:cache_spec) do |p|
   p.version '0.0.1'
   p.description 'Update cache file of api.apec'
-  p.syntax "#{$0} [options]"
+  p.syntax "#{$PROGRAM_NAME} [options]"
 
   p.option :noop, '-n', '--noop', 'No-op run (will not update the cached file'
   p.option :quiet, '-q', '--quiet', 'Quiet mode'

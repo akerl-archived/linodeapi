@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'httparty', '~> 0.13.1'
 
   s.add_development_dependency 'rubocop', '~> 0.38.0'
-  s.add_development_dependency 'rake', '~> 11.0.0'
+  s.add_development_dependency 'rake', '~> 11.1.0'
   s.add_development_dependency 'codecov', '~> 0.1.1'
   s.add_development_dependency 'rspec', '~> 3.4.0'
   s.add_development_dependency 'fuubar', '~> 2.0.0'

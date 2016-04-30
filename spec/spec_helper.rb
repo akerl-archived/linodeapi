@@ -9,6 +9,9 @@ end
 
 require 'rspec'
 require 'linodeapi'
+require 'webmock'
+
+WebMock.enable!
 
 require 'vcr'
 VCR.configure do |c|

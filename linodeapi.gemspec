@@ -20,6 +20,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'codecov', '~> 0.1.1'
   s.add_development_dependency 'rspec', '~> 3.4.0'
   s.add_development_dependency 'fuubar', '~> 2.0.0'
-  s.add_development_dependency 'webmock', '~> 2.0.0'
+  s.add_development_dependency 'webmock', '~> 2.1.0'
   s.add_development_dependency 'vcr', '~> 3.0.0'
 end

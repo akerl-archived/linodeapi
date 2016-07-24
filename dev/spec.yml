@@ -1016,6 +1016,16 @@ linode:
         - required: false
         - type: :boolean
     - throws: []
+  kvmify:
+  - desc: Changes a Linode's hypervisor from Xen to KVM.
+  - params:
+    - linodeid:
+      - desc: The LinodeID to migrate to KVM.
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+    - VALIDATION
   list:
   - desc: 'Returns a list of all Linodes user has access or delete to, including some
       properties.  Status values are -1: Being Created, 0: Brand New, 1: Running,

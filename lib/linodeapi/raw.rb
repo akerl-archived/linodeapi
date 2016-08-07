@@ -18,8 +18,8 @@ module LinodeAPI
       @apikey = params.fetch(:apikey) { authenticate(params) }
     end
 
-    def respond_to?(method, include_private = false)
-      super || @spec[:subs].include?(method)
+    def respond_to_missing?(method, include_private = false)
+      @spec[:subs].include?(method) || super
     end
 
     def to_s

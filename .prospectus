@@ -1,3 +1,6 @@
+Prospectus.extra_dep('file', 'mercenary')
+Prospectus.extra_dep('file', 'linodeapi')
+
 require 'yaml'
 
 item do

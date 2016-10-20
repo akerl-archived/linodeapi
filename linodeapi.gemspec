@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'httparty', '~> 0.14.0'
 
-  s.add_development_dependency 'rubocop', '~> 0.43.0'
+  s.add_development_dependency 'rubocop', '~> 0.44.1'
   s.add_development_dependency 'rake', '~> 11.3.0'
   s.add_development_dependency 'codecov', '~> 0.1.1'
   s.add_development_dependency 'rspec', '~> 3.5.0'

@@ -19,7 +19,7 @@ describe LinodeAPI::Raw do
     VCR.use_cassette('basic_auth_fail') do
       expect do
         LinodeAPI::Raw.new(username: 'bad', password: 'bad')
-      end.to raise_error RuntimeError
+      end.to raise_error LinodeAPI::APIError
     end
   end
 

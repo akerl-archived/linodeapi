@@ -73,19 +73,25 @@ module LinodeAPI
     end
 
     def error_check(resp)
-      code = resp.code
-      raise("API threw HTTP error code #{code}") unless code == 200
+      error = create_http_error(resp)
+      raise(error) if error
       data = resp.parsed_response
       raise('Invalid API response received') if data.nil?
       self.class.parse data
     end
 
+    def create_http_error(resp)
+      code = resp.code
+      return nil if code == 200
+      delay = resp.headers['Retry-After']
+      return RetryableHTTPError.new(code, delay) if delay
+      HTTPError.new(code)
+    end
+
     class << self
       def parse(resp)
         resp['ERRORARRAY'].reject! { |x| x['ERRORCODE'].zero? }
-        unless resp['ERRORARRAY'].empty?
-          raise "API Error on #{resp['ACTION']}: #{resp['ERRORARRAY']}"
-        end
+        raise(APIError, resp) unless resp['ERRORARRAY'].empty?
         data = resp['DATA']
         data.is_a?(Hash) ? clean(data) : data.map { |x| clean x }
       end

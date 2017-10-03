@@ -75,4 +75,5 @@ module LinodeAPI
   end
 end
 
+require 'linodeapi/errors'
 require 'linodeapi/raw'

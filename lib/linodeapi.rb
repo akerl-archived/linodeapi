@@ -77,3 +77,4 @@ end
 
 require 'linodeapi/errors'
 require 'linodeapi/raw'
+require 'linodeapi/retryable'

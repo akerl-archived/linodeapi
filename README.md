@@ -54,6 +54,12 @@ api.linode.create
 # ArgumentError: linode.create requires planid
 ```
 
+### Retryable helper
+
+The LinodeAPI::Retryable class automatically handles 429 errors (really, any HTTP error that is accompanied by a Retry-After header).
+
+This class behaves identially to the LinodeAPI::Raw class, with 2 additional parameters at creation: `max_retries` sets the total number of requests it will attempt per call and `max_delay` sets the maximum delay between attempts. They default to 3 tries and 60 seconds, respectively.
+
 ## Installation
 
     gem install linodeapi

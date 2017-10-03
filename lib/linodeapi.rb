@@ -76,5 +76,6 @@ module LinodeAPI
 end
 
 require 'linodeapi/errors'
+require 'linodeapi/helpers'
 require 'linodeapi/raw'
 require 'linodeapi/retryable'

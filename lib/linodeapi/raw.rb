@@ -9,17 +9,16 @@ module LinodeAPI
   class Raw
     include HTTParty
 
-    attr_reader :apikey, :spec, :names
-
     def initialize(params = {})
+      @options = params
       self.class.base_uri params.fetch(:endpoint, DEFAULT_ENDPOINT)
-      @names = params.fetch(:names) { [] }
-      @spec = params.fetch(:spec) { LinodeAPI.spec }
-      @apikey = params.fetch(:apikey) { authenticate(params) }
+      @options[:names] ||= []
+      @options[:spec] ||= LinodeAPI.spec
+      @options[:apikey] ||= authenticate(params)
     end
 
     def respond_to_missing?(method, include_private = false)
-      @spec[:subs].include?(method) || super
+      spec[:subs].include?(method) || super
     end
 
     def to_s
@@ -27,10 +26,22 @@ module LinodeAPI
     end
     alias inspect to_s
 
+    def names
+      @names ||= @options[:names]
+    end
+
+    def spec
+      @spec ||= @options[:spec]
+    end
+
+    def apikey
+      @apikey ||= @options[:apikey]
+    end
+
     private
 
     def authenticate(params = {})
-      return [] unless @names.empty?
+      return [] unless names.empty?
       unless (params.values_at :username, :password).all?
         raise ArgumentError, 'You must provide either an API key or user/pass'
       end
@@ -39,18 +50,18 @@ module LinodeAPI
 
     def method_missing(method, *args, &block)
       return super unless respond_to? method
-      case @spec[:subs][method][:type]
+      case spec[:subs][method][:type]
       when :group then make_group method
       when :call then make_call method, *args
       end
     end
 
     def make_group(method)
-      group = Raw.new(
-        spec: @spec[:subs][method],
-        apikey: @apikey,
-        username: @username,
-        names: @names + [method]
+      group = self.class.new(
+        @options.dup.merge(
+          spec: spec[:subs][method],
+          names: names + [method]
+        )
       )
       name = "@#{method}".to_sym
       instance_variable_set name, group
@@ -64,10 +75,10 @@ module LinodeAPI
     end
 
     def call(method, params = {})
-      spec = @spec[:subs][method]
-      method = (@names + [method.to_s]).join '.'
-      options = self.class.validate method, spec[:params], params
-      options[:api_key] = @apikey
+      mspec = spec[:subs][method]
+      method = (names + [method.to_s]).join '.'
+      options = self.class.validate method, mspec[:params], params
+      options[:api_key] = apikey
       options[:api_action] = method
       error_check self.class.post('', body: options)
     end
@@ -100,8 +111,8 @@ module LinodeAPI
         OpenStruct.new(Hash[object.map { |k, v| [k.downcase.to_sym, v] }])
       end
 
-      def validate(method, spec, given)
-        spec.each_with_object({}) do |(param, info), options|
+      def validate(method, mspec, given)
+        mspec.each_with_object({}) do |(param, info), options|
           if given.include? param
             options[param] = VALIDATION_METHODS[info[:type]].call given[param]
           elsif info[:required]

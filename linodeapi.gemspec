@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'goodcop', '~> 0.5.0'
   s.add_development_dependency 'rake', '~> 12.3.0'
   s.add_development_dependency 'rspec', '~> 3.7.0'
-  s.add_development_dependency 'rubocop', '~> 0.55.0'
+  s.add_development_dependency 'rubocop', '~> 0.56.0'
   s.add_development_dependency 'vcr', '~> 4.0.0'
   s.add_development_dependency 'webmock', '~> 3.4.0'
 end

@@ -208,7 +208,7 @@ domain:
         - required: false
         - type: :numeric
       - priority:
-        - desc: Priority for MX and SRV records, 0-255
+        - desc: Priority for MX and SRV records, 0-65535
         - required: false
         - type: :numeric
       - protocol:
@@ -216,10 +216,15 @@ domain:
             types.
         - required: false
         - type: :string
+      - tag:
+        - desc: The tag attribute for a CAA record.  One of issue, issuewild, iodef.  Ignored
+            on other record types.
+        - required: false
+        - type: :string
       - target:
         - desc: When Type=MX the hostname.  When Type=CNAME the target of the alias.  When
-            Type=TXT the value of the record. When Type=A or AAAA the token of '[remote_addr]'
-            will be substituted with the IP address of the request.
+            Type=TXT or CAA the value of the record. When Type=A or AAAA the token
+            of '[remote_addr]' will be substituted with the IP address of the request.
         - required: false
         - type: :string
       - ttl_sec:
@@ -227,7 +232,7 @@ domain:
         - required: false
         - type: :numeric
       - type:
-        - desc: 'One of: NS, MX, A, AAAA, CNAME, TXT, or SRV'
+        - desc: 'One of: NS, MX, A, AAAA, CNAME, TXT, SRV or CAA'
         - required: true
         - type: :string
       - weight:
@@ -279,7 +284,7 @@ domain:
         - required: false
         - type: :numeric
       - priority:
-        - desc: Priority for MX and SRV records, 0-255
+        - desc: Priority for MX and SRV records, 0-65535
         - required: false
         - type: :numeric
       - protocol:
@@ -291,10 +296,15 @@ domain:
         - desc: ''
         - required: true
         - type: :numeric
+      - tag:
+        - desc: The tag attribute for a CAA record.  One of issue, issuewild, iodef.  Ignored
+            on other record types.
+        - required: false
+        - type: :string
       - target:
         - desc: When Type=MX the hostname.  When Type=CNAME the target of the alias.  When
-            Type=TXT the value of the record. When Type=A or AAAA the token of '[remote_addr]'
-            will be substituted with the IP address of the request.
+            Type=TXT or CAA the value of the record. When Type=A or AAAA the token
+            of '[remote_addr]' will be substituted with the IP address of the request.
         - required: false
         - type: :string
       - ttl_sec:
@@ -643,7 +653,7 @@ linode:
       - NOTFOUND
       - VALIDATION
   create:
-  - desc: Creates a Linode and assigns you full privileges. There is a 75-linodes-per-hour
+  - desc: Creates a Linode and assigns you full privileges. There is a 250-linodes-per-hour
       limiter.
   - params:
     - datacenterid:
@@ -686,10 +696,27 @@ linode:
     create:
     - desc: ''
     - params:
+      - isreadonly:
+        - desc: Enable forced read-only for this Disk
+        - required: false
+        - type: :boolean
+      - label:
+        - desc: The display label for this Disk
+        - required: true
+        - type: :string
       - linodeid:
         - desc: ''
         - required: true
         - type: :numeric
+      - size:
+        - desc: The size in MB of this Disk.
+        - required: true
+        - type: :numeric
+      - type:
+        - desc: 'The formatted type of this disk.  Valid types are: ext3, ext4, swap,
+            raw'
+        - required: true
+        - type: :string
     - throws:
       - NOTFOUND
       - VALIDATION
@@ -709,12 +736,12 @@ linode:
         - required: true
         - type: :numeric
       - rootpass:
-        - desc: The root user's password
+        - desc: The root (or core) user's password
         - required: true
         - type: :string
       - rootsshkey:
-        - desc: Optionally sets this string into /root/.ssh/authorized_keys upon distribution
-            configuration.
+        - desc: Optionally sets this string into /root/.ssh/authorized_keys (or /home/core/.ssh/authorized_keys)
+            upon distribution configuration.
         - required: false
         - type: :string
       - size:
@@ -883,6 +910,14 @@ linode:
         - desc: ''
         - required: true
         - type: :numeric
+      - isreadonly:
+        - desc: Enable forced read-only for this Disk
+        - required: false
+        - type: :boolean
+      - label:
+        - desc: The display label for this Disk
+        - required: false
+        - type: :string
       - linodeid:
         - desc: ''
         - required: false
@@ -1481,6 +1516,7 @@ stackscript:
   - throws:
     - NOACCESS
     - VALIDATION
+    - STACKSCRIPTLIMIT
   delete:
   - desc: ''
   - params:
@@ -1497,7 +1533,8 @@ stackscript:
       - desc: Limits the list to the specified StackScriptID
       - required: false
       - type: :numeric
-  - throws: []
+  - throws:
+    - STACKSCRIPTLIMIT
   update:
   - desc: Update a StackScript.
   - params:
@@ -1559,7 +1596,8 @@ user:
       - required: true
       - type: :string
     - token:
-      - desc: Required when two-factor authentication is enabled.
+      - desc: Required when two-factor authentication is enabled. Emergency scratch
+          codes are not permitted.
       - required: false
       - type: :string
     - username:
@@ -1571,3 +1609,88 @@ user:
     - NEEDTOKEN
     - PASSWORDEXPIRED
     - KEYLIMIT
+    - TOTPEXPIRED
+    - NOACCESS
+volume:
+  clone:
+  - desc: Clones an existing Block Storage Volume.
+  - params:
+    - clonefromid:
+      - desc: ''
+      - required: true
+      - type: :numeric
+    - label:
+      - desc: A unique name for the new Volume
+      - required: true
+      - type: :string
+  - throws:
+    - NOACCESS
+    - " VALIDATION"
+    - " VOLUMEBUSY"
+    - " VOLUMELIMIT"
+  create:
+  - desc: Creates a new Block Storage Volume. One of DatacenterID or LinodeID is required.
+  - params:
+    - datacenterid:
+      - desc: Sets the datacenter where the Volume should be provisioned
+      - required: false
+      - type: :numeric
+    - label:
+      - desc: A unique name for the Volume
+      - required: true
+      - type: :string
+    - linodeid:
+      - desc: The Linode to attach this Volume to
+      - required: false
+      - type: :numeric
+    - size:
+      - desc: Sets the size of the new Volume in GiB
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOACCESS
+    - " VALIDATION"
+    - " ACCOUNTLIMIT"
+    - " VOLUMELIMIT"
+  delete:
+  - desc: Deletes a Block Storage Volume
+  - params:
+    - volumeid:
+      - desc: The Volume to delete
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+  list:
+  - desc: Returns a list of block storage Volumes
+  - params:
+    - volumeid:
+      - desc: Limits the list to the specified Volume
+      - required: false
+      - type: :numeric
+  - throws: []
+  update:
+  - desc: Updates a Volume's properties
+  - params:
+    - label:
+      - desc: A unique name for the Volume
+      - required: false
+      - type: :string
+    - linodeid:
+      - desc: The Linode to attach this Volume to
+      - required: false
+      - type: :numeric
+    - size:
+      - desc: Sets the new size of the new Volume in GiB; Volumes can only be made
+          larger
+      - required: false
+      - type: :numeric
+    - volumeid:
+      - desc: The Volume to modify
+      - required: true
+      - type: :numeric
+  - throws:
+    - NOTFOUND
+    - VALIDATION
+    - VOLUMEBUSY
+    - VOLUMELIMIT

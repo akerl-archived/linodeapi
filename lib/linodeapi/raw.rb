@@ -82,8 +82,14 @@ module LinodeAPI
     def call(method, params = {})
       options = build_call_body(method, params)
       self.class.error_check self.class.post(
-        '', body: options, base_uri: endpoint
+        '', body: options,
+            base_uri: endpoint,
+            headers: { 'User-Agent' => user_agent }
       )
+    end
+
+    def user_agent
+      "linodeapi/#{LinodeAPI::VERSION}"
     end
 
     def build_call_body(method, params)

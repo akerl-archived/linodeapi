@@ -89,7 +89,7 @@ module LinodeAPI
     end
 
     def user_agent
-      "linodeapi/#{LinodeAPI::VERSION}"
+      "linodeapi/#{LinodeAPI::VERSION} ruby/#{RUBY_VERSION}"
     end
 
     def build_call_body(method, params)

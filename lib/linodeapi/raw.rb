@@ -16,6 +16,7 @@ module LinodeAPI
       @options[:names] ||= []
       @options[:spec] ||= LinodeAPI.spec
       @options[:apikey] ||= authenticate(params)
+      @options[:user_agent_prefix] ||= ''
     end
 
     def respond_to_missing?(method, include_private = false)
@@ -89,7 +90,12 @@ module LinodeAPI
     end
 
     def user_agent
-      "linodeapi/#{LinodeAPI::VERSION} ruby/#{RUBY_VERSION}"
+      user_agent_fragments = [
+        @options[:user_agent_prefix],
+        "linodeapi/#{LinodeAPI::VERSION}",
+        "ruby/#{RUBY_VERSION}"
+      ]
+      user_agent_fragments.reject(&:empty?).join(' ')
     end
 
     def build_call_body(method, params)

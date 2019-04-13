@@ -1,3 +1,8 @@
+# 2.0.2 / 2019-04-12
+
+* [FEATURE] Set user-agent to include gem name, ruby version, and a custom "user_agent_prefix" option.
+* [ENHANCEMENT] Updated goodcop to use new version that includes rubocop-performance checks
+
 # 2.0.1 / 2017-10-03
 
 * [ENHANCEMENT] Broke out some of the parsing code into linodeapi/helpers to make it easier to read

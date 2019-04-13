@@ -1,6 +1,11 @@
+lib = File.expand_path('lib', __dir__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+require 'linodeapi/version'
+
 Gem::Specification.new do |s|
   s.name        = 'linodeapi'
-  s.version     = '2.0.1'
+  s.version     = LinodeAPI::VERSION
   s.date        = Time.now.strftime('%Y-%m-%d')
 
   s.summary     = 'Linode API wrapper'
